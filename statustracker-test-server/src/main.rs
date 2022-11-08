@@ -10,15 +10,22 @@ async fn main() {
         .with(fmt::layer().compact())
         .with(EnvFilter::from_env("RUST_LOG"))
         .init();
-    server::start_server(StatusTracker::new(
-        hashmap! {
-            "Staff".into() => vec![
-                Uuid::new_v4()
-            ]
-        },
-        "https://dynmap.minecartrapidtransit.net/standalone/dynmap_new.json".parse().unwrap(),
-        std::env::var("MONGO").unwrap_or_default(),
-        "new_mrt"
-    ).await.unwrap()
-    ).await.unwrap();
+    server::start_server(
+        StatusTracker::new(
+            hashmap! {
+                "Staff".into() => vec![
+                    Uuid::new_v4()
+                ]
+            },
+            "https://dynmap.minecartrapidtransit.net/standalone/dynmap_new.json"
+                .parse()
+                .unwrap(),
+            std::env::var("MONGO").unwrap_or_default(),
+            "new_mrt",
+        )
+        .await
+        .unwrap(),
+    )
+    .await
+    .unwrap();
 }

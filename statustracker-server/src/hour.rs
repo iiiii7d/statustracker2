@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use smol_str::SmolStr;
 use tracing::{debug, trace};
 
-use crate::utils::{BitField60, Category, HourTimestamp, MinuteTimestamp};
+use crate::utils::{BitField64, Category, HourTimestamp, MinuteTimestamp};
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Abs;
@@ -31,14 +31,12 @@ pub struct DeltaRecord {
     pub leaves: Option<Record<Leave>>,
 }
 
-pub const IS_ZERO: fn(&u8) -> bool = |x| *x == 0;
-
 #[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq, Eq)]
 pub struct Hour {
     pub _id: HourTimestamp,
     pub init: Record<Abs>,
     pub start_min: u8,
-    pub tracked_mins: BitField60,
+    pub tracked_mins: BitField64,
     pub deltas: HashMap<SmolStr, DeltaRecord>,
 }
 impl Hour {
@@ -118,7 +116,7 @@ impl Hour {
         if minute_no >= 60 {
             panic!("{minute_no}");
         }
-        self.tracked_mins.0[minute_no as usize] = true;
+        self.tracked_mins.turn_on(minute_no as usize);
         let empty_hash_set = HashSet::new();
         let m = if let Some((m, _)) = self
             .deltas

@@ -19,9 +19,9 @@ pub async fn name_to_uuid(name: &str) -> Result<Option<Uuid>> {
         Some(*id)
     } else {
         debug!(?name, "Retrieving uuid from API");
-        let req = reqwest::get(
-            format!("https://api.mojang.com/users/profiles/minecraft/{name}"),
-        )
+        let req = reqwest::get(format!(
+            "https://api.mojang.com/users/profiles/minecraft/{name}"
+        ))
         .await?;
         if req.status() == StatusCode::BAD_REQUEST {
             return Ok(None);
