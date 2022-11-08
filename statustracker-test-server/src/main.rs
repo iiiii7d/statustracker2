@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 #[rocket::main]
 async fn main() {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
     tracing_subscriber::registry()
         .with(fmt::layer().compact())
         .with(EnvFilter::from_env("RUST_LOG"))
