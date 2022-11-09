@@ -17,6 +17,7 @@
     datasets: Array.from($data.y.entries()).map(([k, d], i) => {
       console.error(k, d)
       return {
+        tension: .25, // TODO easter egg
         label: k,
         data: d,
         borderColor: lineColors[i % lineColors.length],

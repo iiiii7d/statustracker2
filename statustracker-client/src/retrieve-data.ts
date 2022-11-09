@@ -25,7 +25,7 @@ export type Hour = {
 };
 
 const urlSearchParams = new URLSearchParams(window.location.search);
-const server = decodeURIComponent(urlSearchParams.get("server"));
+const server = decodeURIComponent(urlSearchParams.get("server") ?? "");
 
 async function getMsgPack<T>(url: string): Promise<T | undefined> {
   let res = await axios
@@ -59,7 +59,7 @@ export async function retrievePlayerCounts(
   let y: Map<string, number[]> = new Map();
   let push = (k: string, n: number) => {
     if (!y.has(k)) y.set(k, []);
-    y.get(k).push(n);
+    y.get(k)?.push(n);
   };
   let current: Map<string, number> = new Map();
 
@@ -101,14 +101,14 @@ export async function retrievePlayerCounts(
               record.left.length,
           );
           for (let [cat, list] of Object.entries(record.joined_categories)) {
-            current.set(cat, (current.get("cat") ?? 0) + list.length);
+            current.set(cat, (current.get(cat) ?? 0) + list.length);
           }
           for (let [cat, list] of Object.entries(record.left_categories)) {
-            current.set(cat, (current.get("cat") ?? 0) - list.length);
+            current.set(cat, (current.get(cat) ?? 0) - list.length);
           }
         }
-        for (let cat of current.keys()) {
-          push(cat, current.get(cat) ?? NaN);
+        for (let [cat, n] of current.entries()) {
+          push(cat, n);
         }
       }
     }
@@ -147,7 +147,7 @@ export async function retrievePlayerData(hours: Hour[], player: string) {
     t++
   ) {
     let h: Hour | undefined = hours.find((h) => h._id === t);
-    if (h === undefined && start !== null) {
+    if (h === undefined) {
       leave(t);
     } else
       for (let m = 0; m < 60; m++) {
