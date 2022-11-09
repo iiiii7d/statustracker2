@@ -1,6 +1,7 @@
 <script lang="ts">
-  import Input from "./Input.svelte";
   import Chart from "./Chart.svelte";
+  import Info from "./Info.svelte";
+  import Input from "./Input.svelte";
   import RoleStats from "./RoleStats.svelte";
   
 </script>
@@ -9,3 +10,5 @@
 <Input />
 <hr />
 <RoleStats />
+<hr />
+<Info />
