@@ -14,14 +14,23 @@
   let chartData: any;
   $: chartData = {
     labels: $data.x,
-    datasets: Array.from($data.y.entries()).map(([k, d], i) => {
+    datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
       console.error(k, d)
-      return {
+      return [{
         tension: .25, // TODO easter egg
         label: k,
         data: d,
         borderColor: lineColors[i % lineColors.length],
-      }
+      }, {
+        tension: .25, // TODO easter egg
+        label: `${k} (rolling average 1h)`,
+        data: d.map((_, i) => {
+          let slice = d.slice(Math.max(i - 10, 0), Math.min(i + 11, d.length)).filter(a => !isNaN(a));
+          return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
+        }),
+        borderColor: lineColors[i % lineColors.length]+"5",
+        pointRadius: 0
+      }]
     })
   }
   let options: any;

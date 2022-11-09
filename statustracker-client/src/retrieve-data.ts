@@ -57,8 +57,13 @@ export async function retrievePlayerCounts(
 ) {
   let x: moment.Moment[] = [];
   let y: Map<string, number[]> = new Map();
+  let count = 0;
   let push = (k: string, n: number) => {
-    if (!y.has(k)) y.set(k, []);
+    if (!y.has(k))
+      y.set(
+        k,
+        Array(count).map((_) => NaN),
+      );
     y.get(k)?.push(n);
   };
   let current: Map<string, number> = new Map();
@@ -111,6 +116,7 @@ export async function retrievePlayerCounts(
           push(cat, n);
         }
       }
+      count++;
     }
   }
   data.set({ x, y });

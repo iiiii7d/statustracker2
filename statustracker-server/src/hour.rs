@@ -44,7 +44,7 @@ impl Hour {
             _id: (timestamp / 60) as u32,
             tracked_mins: {
                 let mut bits = BitField64::default();
-                bits.turn_on(min as usize);
+                bits.turn_on(min as i32);
                 bits
             },
             deltas: HashMap::from([(min.to_string().into(), Record::Abs(abs))]),
@@ -101,9 +101,9 @@ impl Hour {
         if minute_no >= 60 {
             panic!("{minute_no}");
         }
-        self.tracked_mins.turn_on(minute_no as usize);
+        self.tracked_mins.turn_on(minute_no as i32);
 
-        if minute_no == 0 || !self.tracked_mins.is_on(minute_no as usize - 1) {
+        if minute_no == 0 || !self.tracked_mins.is_on(minute_no as i32 - 1) {
             debug!(minute_no, "Adding Abs record");
             self.deltas
                 .insert(minute_no.to_string().into(), Record::Abs(abs));
