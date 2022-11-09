@@ -54,11 +54,11 @@
               content: `${from.local().format("HH:mm")} → ${to.local().format("HH:mm")}`,
               color: "#fc0",
             },
-            enter({element}) {
+            enter({element}: any) {
               element.label.options.display = true;
               return true;
             },
-            leave({element}) {
+            leave({element}: any) {
               element.label.options.display = false;
               return true;
             }
