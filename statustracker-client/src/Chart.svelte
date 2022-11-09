@@ -1,17 +1,15 @@
 <script lang="ts">
   import { Chart, registerables } from 'chart.js';
   import 'chartjs-adapter-moment';
+  import annotationPlugin from 'chartjs-plugin-annotation';
   import { onMount } from 'svelte';
   import { Line } from 'svelte-chartjs';
   import { retrievePlayerCounts } from "./retrieve-data";
-  import { data, playerActiveTimes } from "./stores";
-  import annotationPlugin from 'chartjs-plugin-annotation';
+  import { data, lineColors, playerActiveTimes } from "./stores";
 
   Chart.register(...registerables, annotationPlugin);
   
   onMount(retrievePlayerCounts);
-
-  let lineColors = ["#eee", "#8c0", "#c59", "#f80", "#088"]
 
   let chartData: any;
   $: chartData = {
