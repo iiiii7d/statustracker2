@@ -2,7 +2,6 @@ on: workflow_dispatch
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-C link-arg=-fuse-ld=lld -Zshare-generics=y"
 
 jobs:
   build:
