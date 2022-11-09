@@ -104,7 +104,7 @@ At first the data was hosted on JSON files in Replit; however due to how Replit 
 >
 > **me:** currently theres a giant \\[gap\\]
 
-... and then somehow I forgot about it (I think?) until the 13th of September 2021 when the forum was discussing about the lack of staff in (a) certain timezone(s) and the possibility of a conductor rank. People suggested improving the UI and updating the code to save the data so that it would be useful for the discussion.
+... and then somehow I forgot about it (I think?) until the 13th of September 2021 when the forum was discussing about the lack of staff in (a) certain timezone(s). People suggested improving the UI and updating the code to save the data so that it would be useful for the discussion.
 
 So I changed the database to MongoDB and it has been running since 14 September 2021.
 
