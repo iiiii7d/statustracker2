@@ -1,0 +1,21 @@
+on: workflow_dispatch
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-C link-arg=-fuse-ld=lld -Zshare-generics=y"
+  RUSTC_LINKER: clang
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo +nightly build --release
+      - name: Install nightly
+        run: rustup toolchain install nightly
+      - uses: actions/upload-artifact@v3
+        with:
+          name: server
+          path: target/release/statustracker-server
