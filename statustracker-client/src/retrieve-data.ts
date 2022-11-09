@@ -20,7 +20,7 @@ export type Record =
 
 export type Hour = {
   _id: HourTimestamp;
-  tracked_mins: number;
+  tracked_mins: [number, number];
   deltas: Map<string, Record>;
 };
 
@@ -63,7 +63,12 @@ export async function retrievePlayerCounts(
     console.error(h);
     for (let m = 0; m < 60; m++) {
       x.push(moment.unix(t * 3600 + m * 60).utc());
-      if (h === undefined || (h.tracked_mins & (1 << m)) === 0) {
+      if (
+        h === undefined ||
+        (m < 30
+          ? h.tracked_mins[0] & (1 << m)
+          : h.tracked_mins[1] & (1 << (m - 30))) === 0
+      ) {
         y.push(0);
       } else {
         let record: Record | undefined = h.deltas[m.toString()];
