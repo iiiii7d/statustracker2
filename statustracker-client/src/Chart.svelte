@@ -25,7 +25,7 @@
         tension: .25, // TODO easter egg
         label: `${k} (rolling average 1h)`,
         data: d.map((_, i) => {
-          let slice = d.slice(Math.max(i - 10, 0), Math.min(i + 11, d.length)).filter(a => !isNaN(a));
+          let slice = d.slice(Math.max(i - 30, 0), Math.min(i + 31, d.length)).filter(a => !isNaN(a));
           return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
         }),
         borderColor: lineColors[i % lineColors.length]+"5",
