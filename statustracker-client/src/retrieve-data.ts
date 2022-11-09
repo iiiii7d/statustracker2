@@ -84,7 +84,7 @@ export async function retrievePlayerCounts(
         } else if ("all" in record) {
           current = record.all.length;
         } else {
-          current = current ?? 0 + record.joined.length - record.left.length;
+          current = (current ?? 0) + record.joined.length - record.left.length;
         }
         y.push(current ?? NaN);
       }
