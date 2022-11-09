@@ -1,6 +1,6 @@
 use std::{collections::HashMap, time::SystemTime};
 
-use eyre::{eyre, Result};
+use color_eyre::eyre::{eyre, Result};
 use itertools::Itertools;
 use mongodb::{
     bson::{doc, to_bson},
@@ -20,24 +20,28 @@ use crate::{
     utils::{Category, HourTimestamp, MinuteTimestamp},
 };
 
+#[derive(Deserialize, Serialize)]
+pub struct Config {
+    categories: HashMap<Category, Vec<Uuid>>,
+    dynmap_link: Url,
+    mongodb_uri: SmolStr,
+    database_name: SmolStr,
+}
+
 pub struct StatusTracker {
-    pub categories: HashMap<Category, Vec<Uuid>>,
+    pub config: Config,
     pub name_map: NameMapWrapper,
-    pub dynmap_link: Url,
     pub database: Database,
 }
 
 impl StatusTracker {
     #[tracing::instrument(skip_all)]
-    pub async fn new(
-        categories: HashMap<Category, Vec<Uuid>>,
-        dynmap_link: Url,
-        mongodb_uri: impl AsRef<str>,
-        database_name: &str,
-    ) -> Result<Self> {
+    pub async fn new(config: Config) -> Result<Self> {
         info!("Creating client");
-        let client = Client::with_options(ClientOptions::parse(mongodb_uri).await?)?;
-        let database = client.database(database_name);
+        let client = Client::with_options(
+            ClientOptions::parse(std::env::var(config.mongodb_uri.to_string())?).await?,
+        )?;
+        let database = client.database(&config.database_name);
         info!("Retrieving name_map");
         let name_map = database
             .collection("name_map")
@@ -45,8 +49,7 @@ impl StatusTracker {
             .await?
             .unwrap_or_default();
         Ok(Self {
-            categories,
-            dynmap_link,
+            config,
             name_map,
             database,
         })
@@ -91,7 +94,7 @@ impl StatusTracker {
     #[tracing::instrument(skip(self))]
     pub async fn pull_from_dynmap(&self) -> Result<Vec<SmolStr>> {
         info!("Pulling player list from Dynmap");
-        let json: Map<String, Value> = reqwest::get(self.dynmap_link.to_owned())
+        let json: Map<String, Value> = reqwest::get(self.config.dynmap_link.to_owned())
             .await?
             .json()
             .await?;
@@ -139,7 +142,7 @@ impl StatusTracker {
         for (uuid, id) in ids {
             debug!(?uuid, id, "Splitting into categories");
             record.all.insert(id);
-            for (cat, cat_ids) in &self.categories {
+            for (cat, cat_ids) in &self.config.categories {
                 if cat_ids.contains(&uuid) {
                     record
                         .categories

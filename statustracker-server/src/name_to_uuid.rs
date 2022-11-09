@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use eyre::{eyre, Result};
+use color_eyre::eyre::{eyre, Result};
 use once_cell::sync::Lazy;
 use reqwest::StatusCode;
 use serde_json::{Map, Value};

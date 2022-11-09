@@ -1,6 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
-use eyre::Result;
+use color_eyre::eyre::Result;
 use futures::stream::StreamExt;
 use mongodb::bson::doc;
 use rocket::{
@@ -15,7 +15,7 @@ use tokio::sync::RwLock;
 use tracing::{error, info};
 use uuid::Uuid;
 
-use crate::{hour::Hour, name_to_uuid::name_to_uuid, utils::HourTimestamp, StatusTracker};
+use crate::{hour::Hour, name_to_uuid::name_to_uuid, tracker::StatusTracker, utils::HourTimestamp};
 
 #[derive(Debug)]
 struct CustomMsgPack<T>(pub T);

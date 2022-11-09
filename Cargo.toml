@@ -1,2 +1,2 @@
 [workspace]
-members = ["statustracker-server", "statustracker-test-server"]
+members = ["statustracker-server"]
