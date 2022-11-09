@@ -15,7 +15,7 @@ use tracing::{debug, info, trace};
 use uuid::{Bytes, Uuid};
 
 use crate::{
-    hour::{Abs, Hour, Record},
+    hour::{AbsRecord, Hour},
     name_to_uuid::name_to_uuid,
     utils::{Category, HourTimestamp, MinuteTimestamp},
 };
@@ -134,8 +134,8 @@ impl StatusTracker {
         Ok(uuids)
     }
     #[tracing::instrument(skip(self))]
-    pub fn split_into_categories(&self, ids: Vec<(Uuid, usize)>) -> Record<Abs> {
-        let mut record = Record::default();
+    pub fn split_into_categories(&self, ids: Vec<(Uuid, usize)>) -> AbsRecord {
+        let mut record = AbsRecord::default();
         for (uuid, id) in ids {
             debug!(?uuid, id, "Splitting into categories");
             record.all.insert(id);
@@ -152,7 +152,7 @@ impl StatusTracker {
         record
     }
     #[tracing::instrument(skip(self))]
-    pub async fn add_record(&self, record: Record<Abs>) -> Result<()> {
+    pub async fn add_record(&self, record: AbsRecord) -> Result<()> {
         let timestamp: MinuteTimestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
@@ -163,7 +163,7 @@ impl StatusTracker {
             .await?
             .unwrap_or_else(|| Hour::new(timestamp, record.to_owned()));
         info!(timestamp, "Adding record");
-        hour.add_delta(timestamp, record);
+        hour.add_record(timestamp, record);
         self.save_hour(hour).await?;
         Ok(())
     }

@@ -4,6 +4,6 @@ pub mod server;
 pub mod tracker;
 pub mod utils;
 
-pub use hour::{DeltaRecord, Hour, Record};
+pub use hour::{AbsRecord, Hour, Record};
 pub use server::start_server;
 pub use tracker::StatusTracker;

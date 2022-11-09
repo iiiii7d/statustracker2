@@ -17,4 +17,7 @@ impl BitField64 {
     pub fn turn_on(&mut self, i: usize) {
         self.0 |= 1 << i
     }
+    pub fn is_on(self, i: usize) -> bool {
+        (self.0 & (1 << i)) != 0
+    }
 }

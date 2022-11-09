@@ -3,23 +3,26 @@ import axios from "axios";
 import moment from "moment";
 import { data } from "./stores";
 
-type Abs = void;
-type Join = void;
-type Leave = void;
 type HourTimestamp = number;
 type MinuteTimestamp = number;
 
-export type Record<_T> = {
-  all: number[],
-  categories: Map<string, number[]>
-}
+export type Record =
+  | {
+      all: number[];
+      categories: Map<string, number[]>;
+    }
+  | {
+      joined: number[];
+      joined_categories: Map<string, number[]>;
+      left: number[];
+      left_categories: Map<string, number[]>;
+    };
 
 export type Hour = {
-  _id: HourTimestamp,
-  init: Record<Abs>,
-  start_min: number,
-  deltas: Map<string, { joins: Record<Join>, leaves: Record<Leave> }>
-}
+  _id: HourTimestamp;
+  tracked_mins: number;
+  deltas: Map<string, Record>;
+};
 
 const urlSearchParams = new URLSearchParams(window.location.search);
 const server = decodeURIComponent(urlSearchParams.get("server"));
@@ -33,38 +36,48 @@ async function getMsgPack<T>(url: string): Promise<T | undefined> {
 }
 
 export async function getNameMap(): Promise<string[]> {
-  return await getMsgPack(`${server}/name_map`)
+  return await getMsgPack(`${server}/name_map`);
 }
 
-export async function getAllBetween(f: HourTimestamp, t: MinuteTimestamp): Promise<Hour[]> {
-  return await getMsgPack(`${server}/?from=${f}&to=${t}`)
+export async function getAllBetween(
+  f: HourTimestamp,
+  t: MinuteTimestamp,
+): Promise<Hour[]> {
+  return await getMsgPack(`${server}/?from=${f}&to=${t}`);
 }
 
-export async function retrievePlayerCounts(from: number = 0, to: number = 4294967295) {
+export async function retrievePlayerCounts(
+  from: number = 0,
+  to: number = 4294967295,
+) {
   let x = [];
   let y = [];
   let hours = await getAllBetween(from, to);
   let current = null;
-  for (let t = Math.min(...hours.map(h => h._id)); t <= Math.max(...hours.map(h => h._id)); t++) {
-    let h: Hour | undefined = hours.find(h => h._id === t)
+  for (
+    let t = Math.min(...hours.map((h) => h._id));
+    t <= Math.max(...hours.map((h) => h._id));
+    t++
+  ) {
+    let h: Hour | undefined = hours.find((h) => h._id === t);
+    console.error(h);
     for (let m = 0; m < 60; m++) {
       x.push(moment.unix(t * 3600 + m * 60).utc());
-      if (!h) {
-        y.push(current ?? 0);
-      } else if (h.start_min === m) {
-        current = h.init.all.length;
-        y.push(current)
-      } else if (current !== null) {
-        current += (h.deltas[m.toString()]?.joins.all.length ?? 0) - (h.deltas[m.toString()]?.leaves.all.length ?? 0)
-        y.push(current)
+      if (h === undefined || (h.tracked_mins & (1 << m)) === 0) {
+        y.push(0);
       } else {
-        y.push(current ?? 0)
+        let record: Record | undefined = h.deltas[m.toString()];
+        if (record === undefined) {
+        } else if ("all" in record) {
+          current = record.all.length;
+        } else {
+          current = current ?? 0 + record.joined.length - record.left.length;
+        }
+        y.push(current ?? 0);
       }
     }
   }
-  data.set({x, y})
+  data.set({ x, y });
 }
 
-export async function retrievePlayerData(player: string) {
-  
-}
+export async function retrievePlayerData(player: string) {}
