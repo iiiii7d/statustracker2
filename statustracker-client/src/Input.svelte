@@ -9,6 +9,7 @@
     retrievePlayerCounts(
       from !== "" ? Math.floor(moment(from).unix()/3600) : 0,
       to !== "" ? Math.floor(moment(to).unix()/3600) : 4294967295,
+      player
     )
   }
   const version = __APP_VERSION__;

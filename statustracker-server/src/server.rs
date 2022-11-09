@@ -8,9 +8,7 @@ use rocket::{
     http::{Header, Status},
     response,
     response::{content, Responder},
-    routes,
-    serde::json::Json,
-    Request, Response, State,
+    routes, Request, Response, State,
 };
 use serde::Serialize;
 use tokio::sync::RwLock;
@@ -86,20 +84,20 @@ async fn range(
 }
 
 #[rocket::get("/name_map")]
-async fn name_map(tracker: &State<Arc<RwLock<StatusTracker>>>) -> CustomMsgPack<Vec<Uuid>> {
+async fn name_map(tracker: &State<Arc<RwLock<StatusTracker>>>) -> CustomMsgPack<Vec<String>> {
     info!("Retrieving name map");
     let a = &tracker.inner().read().await.name_map;
     CustomMsgPack(
         a.data
             .iter()
-            .map(|bytes| Uuid::from_bytes(*bytes))
+            .map(|bytes| Uuid::from_bytes(*bytes).to_string())
             .collect(),
     )
 }
 
 #[rocket::get("/uuid/<name>")]
-async fn uuid_route(name: &str) -> Result<Json<Option<String>>, String> {
-    Ok(Json(
+async fn uuid_route(name: &str) -> Result<CustomMsgPack<Option<String>>, String> {
+    Ok(CustomMsgPack(
         name_to_uuid(name)
             .await
             .map_err(|a| format!("Error while retrieving uuid: {a}"))?

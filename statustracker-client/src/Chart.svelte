@@ -4,21 +4,54 @@
   import { onMount } from 'svelte';
   import { Line } from 'svelte-chartjs';
   import { retrievePlayerCounts } from "./retrieve-data";
-  import { data } from "./stores";
+  import { data, playerActiveTimes } from "./stores";
+  import annotationPlugin from 'chartjs-plugin-annotation';
 
-  Chart.register(...registerables);
+  Chart.register(...registerables, annotationPlugin);
   
   onMount(retrievePlayerCounts);
 
+  let chartData: any;
   $: chartData = {
     labels: $data.x,
     datasets: [{
       label: "Players",
       data: $data.y,
-      borderColor: ["#eee"]
+      borderColor: ["#eee"],
     }]
   }
-  let options: any = {
+  let options: any;
+  $: options = {
+    plugins: {
+      annotation: {
+        common: {
+          drawTime: 'beforeDraw'
+        },
+        annotations: $playerActiveTimes.map(([from, to]) => {
+          return {
+            type: 'box',
+            backgroundColor: '#333',
+            borderWidth: 0,
+            xMin: from,
+            xMax: to,
+            label: {
+              drawTime: 'afterDatasetsDraw',
+              display: false,
+              content: `${from.local().format("HH:mm")} → ${to.local().format("HH:mm")}`,
+              color: "#fc0",
+            },
+            enter({element}) {
+              element.label.options.display = true;
+              return true;
+            },
+            leave({element}) {
+              element.label.options.display = false;
+              return true;
+            }
+          }
+        })
+      }
+    },
     scales: {
       x: {
         type: 'time',
