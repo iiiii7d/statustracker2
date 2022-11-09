@@ -11,7 +11,7 @@ specifiers:
   chartjs-plugin-annotation: ^2.0.1
   moment: ^2.29.4
   postcss: ^8.4.18
-  sass: ^1.56.0
+  sass: ^1.56.1
   svelte: ^3.52.0
   svelte-chartjs: ^3.0.1
   svelte-check: ^2.9.2
@@ -32,14 +32,14 @@ devDependencies:
   chartjs-plugin-annotation: 2.0.1_chart.js@3.9.1
   moment: 2.29.4
   postcss: 8.4.18
-  sass: 1.56.0
+  sass: 1.56.1
   svelte: 3.52.0
   svelte-chartjs: 3.0.1_tb3ej74444re4pquu4iiz3h3dy
-  svelte-check: 2.9.2_yfzyfrdrf5nkuyusxfulk7usqm
-  svelte-preprocess: 4.10.7_q3kj4huyebzs2rsl7e4i4ztjmq
+  svelte-check: 2.9.2_tcelcmnwqtohpc7g6laq3noye4
+  svelte-preprocess: 4.10.7_svircenbrjxm3sicbzuhllhhiu
   tslib: 2.4.1
   typescript: 4.8.4
-  vite: 3.2.3_sass@1.56.0
+  vite: 3.2.3_sass@1.56.1
   vite-plugin-top-level-await: 1.2.1_vite@3.2.3
 
 packages:
@@ -150,7 +150,7 @@ packages:
       magic-string: 0.26.7
       svelte: 3.52.0
       svelte-hmr: 0.15.0_svelte@3.52.0
-      vite: 3.2.3_sass@1.56.0
+      vite: 3.2.3_sass@1.56.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1382,10 +1382,10 @@ packages:
       rimraf: 2.7.1
     dev: true
 
-  /sass/1.56.0:
+  /sass/1.56.1:
     resolution:
       {
-        integrity: sha512-WFJ9XrpkcnqZcYuLRJh5qiV6ibQOR4AezleeEjTjMsCocYW59dEG19U3fwTTXxzi2Ed3yjPBp727hbbj53pHFw==,
+        integrity: sha512-VpEyKpyBPCxE7qGDtOcdJ6fFbcpOM+Emu7uZLxVrkX8KVU/Dp5UF7WLvzqRuUhB6mqqQt1xffLoG+AndxTZrCQ==,
       }
     engines: { node: ">=12.0.0" }
     hasBin: true
@@ -1454,7 +1454,7 @@ packages:
       svelte: 3.52.0
     dev: true
 
-  /svelte-check/2.9.2_yfzyfrdrf5nkuyusxfulk7usqm:
+  /svelte-check/2.9.2_tcelcmnwqtohpc7g6laq3noye4:
     resolution:
       {
         integrity: sha512-DRi8HhnCiqiGR2YF9ervPGvtoYrheE09cXieCTEqeTPOTJzfoa54Py8rovIBv4bH4n5HgZYIyTQ3DDLHQLl2uQ==,
@@ -1470,7 +1470,7 @@ packages:
       picocolors: 1.0.0
       sade: 1.8.1
       svelte: 3.52.0
-      svelte-preprocess: 4.10.7_q3kj4huyebzs2rsl7e4i4ztjmq
+      svelte-preprocess: 4.10.7_svircenbrjxm3sicbzuhllhhiu
       typescript: 4.8.4
     transitivePeerDependencies:
       - "@babel/core"
@@ -1497,7 +1497,7 @@ packages:
       svelte: 3.52.0
     dev: true
 
-  /svelte-preprocess/4.10.7_q3kj4huyebzs2rsl7e4i4ztjmq:
+  /svelte-preprocess/4.10.7_svircenbrjxm3sicbzuhllhhiu:
     resolution:
       {
         integrity: sha512-sNPBnqYD6FnmdBrUmBCaqS00RyCsCpj2BG58A1JBswNF7b0OKviwxqVrOL/CKyJrLSClrSeqQv5BXNg2RUbPOw==,
@@ -1546,7 +1546,7 @@ packages:
       detect-indent: 6.1.0
       magic-string: 0.25.9
       postcss: 8.4.18
-      sass: 1.56.0
+      sass: 1.56.1
       sorcery: 0.10.0
       strip-indent: 3.0.0
       svelte: 3.52.0
@@ -1610,10 +1610,10 @@ packages:
       vite: ">=2.8"
     dependencies:
       "@swc/core": 1.3.14
-      vite: 3.2.3_sass@1.56.0
+      vite: 3.2.3_sass@1.56.1
     dev: true
 
-  /vite/3.2.3_sass@1.56.0:
+  /vite/3.2.3_sass@1.56.1:
     resolution:
       {
         integrity: sha512-h8jl1TZ76eGs3o2dIBSsvXDLb1m/Ec1iej8ZMdz+PsaFUsftZeWe2CZOI3qogEsMNaywc17gu0q6cQDzh/weCQ==,
@@ -1645,7 +1645,7 @@ packages:
       postcss: 8.4.18
       resolve: 1.22.1
       rollup: 2.79.1
-      sass: 1.56.0
+      sass: 1.56.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
