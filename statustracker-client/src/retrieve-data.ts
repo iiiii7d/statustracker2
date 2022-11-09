@@ -25,7 +25,7 @@ export type Hour = {
 };
 
 const urlSearchParams = new URLSearchParams(window.location.search);
-const server = decodeURIComponent(urlSearchParams.get("server") ?? "");
+export const server = decodeURIComponent(urlSearchParams.get("server") ?? "");
 
 async function getMsgPack<T>(url: string): Promise<T | undefined> {
   let res = await axios
