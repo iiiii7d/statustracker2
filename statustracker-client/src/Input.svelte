@@ -26,8 +26,8 @@
     let lastLeft = lastSession === undefined ? "further back in time" : "on " + lastSession[1].toLocaleString();
     return {
       totalTime,
-      from: moment(from || 0).toLocaleString(),
-      to: moment(to || 4294967295 * 3600).toLocaleString(),
+      from: from ? moment(from).toLocaleString() : "the start of StatusTracker 2",
+      to: to ? moment(to).toLocaleString() : "now",
       lastLeft
     }
   }
@@ -53,7 +53,7 @@
 {#if playerStats && player === origPlayer}
   <span id="player-stats"><b>{player}</b> has played
     for <b>{playerStats.totalTime}</b> between <b>{playerStats.from}</b> and <b>{playerStats.to}</b>,
-    last log off was <b>{playerStats.lastLeft}</b></span>
+    last seen <b>{playerStats.lastLeft}</b></span>
 {:else if player === origPlayer && player !== ""}
   <span id="player-stats">No data found for <b>{player}</b></span>
 {/if}
