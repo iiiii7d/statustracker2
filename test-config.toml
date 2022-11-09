@@ -1,6 +1,6 @@
 dynmap_link = "https://dynmap.minecartrapidtransit.net/standalone/dynmap_new.json"
 mongodb_uri = "MONGO"
-database_name = "new_mrt"
+database_name = "dev"
 
 [categories]
 admins = [
