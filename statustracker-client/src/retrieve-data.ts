@@ -9,19 +9,19 @@ type MinuteTimestamp = number;
 export type Record =
   | {
       all: number[];
-      categories: Map<string, number[]>;
+      categories: { [key: string]: number[] };
     }
   | {
       joined: number[];
-      joined_categories: Map<string, number[]>;
+      joined_categories: { [key: string]: number[] };
       left: number[];
-      left_categories: Map<string, number[]>;
+      left_categories: { [key: string]: number[] };
     };
 
 export type Hour = {
   _id: HourTimestamp;
   tracked_mins: [number, number];
-  deltas: Map<string, Record>;
+  deltas: { [key: string]: Record };
 };
 
 const urlSearchParams = new URLSearchParams(window.location.search);
@@ -56,13 +56,18 @@ export async function retrievePlayerCounts(
   player: string = "",
 ) {
   let x: moment.Moment[] = [];
-  let y: number[] = [];
+  let y: Map<string, number[]> = new Map();
+  let push = (k: string, n: number) => {
+    if (!y.has(k)) y.set(k, []);
+    y.get(k).push(n);
+  };
+  let current: Map<string, number> = new Map();
+
   let hours: Hour[] | undefined = await getAllBetween(from, to);
   if (hours === undefined) {
     console.error("Error querying database for hours");
     return;
   }
-  let current: number | null = null;
   for (
     let t = Math.min(...hours.map((h) => h._id));
     t <= Math.max(...hours.map((h) => h._id));
@@ -77,16 +82,34 @@ export async function retrievePlayerCounts(
           ? h.tracked_mins[0] & (1 << m)
           : h.tracked_mins[1] & (1 << (m - 30))) === 0
       ) {
-        y.push(NaN);
+        for (let cat of current.keys()) {
+          push(cat, NaN);
+        }
       } else {
         let record: Record | undefined = h.deltas[m.toString()];
         if (record === undefined) {
         } else if ("all" in record) {
-          current = record.all.length;
+          current.set("all", record.all.length);
+          for (let [cat, list] of Object.entries(record.categories)) {
+            current.set(cat, list.length);
+          }
         } else {
-          current = (current ?? 0) + record.joined.length - record.left.length;
+          current.set(
+            "all",
+            (current.get("all") ?? 0) +
+              record.joined.length -
+              record.left.length,
+          );
+          for (let [cat, list] of Object.entries(record.joined_categories)) {
+            current.set(cat, (current.get("cat") ?? 0) + list.length);
+          }
+          for (let [cat, list] of Object.entries(record.left_categories)) {
+            current.set(cat, (current.get("cat") ?? 0) - list.length);
+          }
         }
-        y.push(current ?? NaN);
+        for (let cat of current.keys()) {
+          push(cat, current.get(cat) ?? NaN);
+        }
       }
     }
   }

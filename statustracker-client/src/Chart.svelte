@@ -11,14 +11,19 @@
   
   onMount(retrievePlayerCounts);
 
+  let lineColors = ["#eee", "#8c0", "#c59", "#f80", "#088"]
+
   let chartData: any;
   $: chartData = {
     labels: $data.x,
-    datasets: [{
-      label: "Players",
-      data: $data.y,
-      borderColor: ["#eee"],
-    }]
+    datasets: Array.from($data.y.entries()).map(([k, d], i) => {
+      console.error(k, d)
+      return {
+        label: k,
+        data: d,
+        borderColor: lineColors[i % lineColors.length],
+      }
+    })
   }
   let options: any;
   $: options = {
