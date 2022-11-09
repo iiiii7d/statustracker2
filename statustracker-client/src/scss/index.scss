@@ -12,3 +12,11 @@ hr {
   margin-top: 25px;
   margin-bottom: 25px;
 }
+
+a {
+  color: #fc0;
+
+  &:hover {
+    color: #8c0;
+  }
+}
