@@ -9,7 +9,7 @@
 
   function generateLine(k: string, d: number[], i: number, avgSpan?: [number, string, string]): any {
     return {
-      tension: .25, // TODO easter egg
+      tension: .25,
       label: `${k}${avgSpan ? ` (Rolling average ${avgSpan[1]})` : ""}`,
       data: avgSpan ? d.map((datum, i) => {
         if (isNaN(datum)) return NaN;

@@ -28,8 +28,8 @@
     let lastLeft = lastSession === undefined ? "further back in time" : "on " + lastSession[1].toLocaleString();
     return {
       totalTime,
-      from: from ? moment(from).toLocaleString() : "the start of StatusTracker 2",
-      to: to ? moment(to).toLocaleString() : "now",
+      from: from ? moment(from).toLocaleString() : "the start of StatusTracker",
+      to: to ? moment(to).toLocaleString() : "the heat death of the universe",
       lastLeft
     }
   }
@@ -54,7 +54,7 @@
 <span>Show activity</span>
 <label for="from">from </label><input type="datetime-local" id="from" bind:value={from}/>
 <label for="to">to </label><input type="datetime-local" id="to" bind:value={to} />
-<label for="player">for player </label><input type="text" id="player" bind:value={player} />
+<label for="player">for player </label><input type="text" id="player" bind:value={player} placeholder="username"/>
 <button on:click={query}>Query</button><br>
 {#if playerStats && player === origPlayer && player !== ""}
   <span id="player-stats"><b>{player}</b> has played
