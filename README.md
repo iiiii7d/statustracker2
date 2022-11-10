@@ -1,16 +1,17 @@
 # StatusTracker 2
 
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/iiiii7d/statustracker2?include_prereleases)
+[![pages-build-deployment](https://github.com/iiiii7d/statustracker2/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/iiiii7d/statustracker2/actions/workflows/pages/pages-build-deployment)
+
 Track players on a Minecraft server through their Dynmap
 
 Made by 7d for the Minecart Rapid Transit server
 
-**Still WIP! Things can and will break**
-
 ## Usage
 
 1. Create a MongoDB cluster and get a URI
-2. Install the server with cargo: `cargo install --git https://github.com/iiiii7d/statustracker2.git`
-3. Create a config toml file with the following contents:
+2. Install the server with cargo: `cargo install --git https://github.com/iiiii7d/statustracker2.git --tag v{version no.}` (for latest commit, omit --tag flag)
+3. Create a toml file for the configuration with the following contents:
 
    ```toml
    # Find a JSON file hosted by dynmap that starts with "currentcount" as a key
