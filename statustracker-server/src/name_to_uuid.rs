@@ -15,10 +15,10 @@ pub static NAME_CACHE: Lazy<RwLock<HashMap<SmolStr, Uuid>>> = Lazy::new(Default:
 pub async fn name_to_uuid(name: &str) -> Result<Option<Uuid>> {
     let mut cache = NAME_CACHE.write().await;
     Ok(if let Some(id) = cache.get(name) {
-        debug!(?name, "Retrieving uuid from cache");
+        debug!(%name, "Retrieving uuid from cache");
         Some(*id)
     } else {
-        debug!(?name, "Retrieving uuid from API");
+        debug!(%name, "Retrieving uuid from API");
         let req = reqwest::get(format!(
             "https://api.mojang.com/users/profiles/minecraft/{name}"
         ))
@@ -27,7 +27,7 @@ pub async fn name_to_uuid(name: &str) -> Result<Option<Uuid>> {
             return Ok(None);
         }
         let json: Map<String, Value> = req.json().await?;
-        trace!(?name, ?json);
+        trace!(%name, ?json);
         let id = json
             .get("id")
             .ok_or_else(|| eyre!("No field `id`"))?

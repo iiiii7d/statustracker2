@@ -6,7 +6,7 @@ pub mod utils;
 
 use std::path::PathBuf;
 
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{eyre, Result};
 use tracing_subscriber::{filter::EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::tracker::StatusTracker;
@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
     } else {
         PathBuf::from("./statustracker.toml")
     };
-    let file = std::fs::read(path)?;
+    let file = std::fs::read(&path).map_err(|e| eyre!("Error opening {}: {e}", path.display()))?;
 
     server::start_server(StatusTracker::new(toml::from_slice(&file)?).await?).await?;
     Ok(())

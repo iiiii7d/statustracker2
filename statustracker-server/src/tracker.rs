@@ -122,7 +122,7 @@ impl StatusTracker {
             let uuid = name_to_uuid(&name)
                 .await?
                 .ok_or_else(|| eyre!("Invalid username {name}"))?;
-            debug!(?name, "Updating name map");
+            debug!(%name, "Updating name map");
             let index = self
                 .name_map
                 .data
@@ -140,7 +140,7 @@ impl StatusTracker {
     pub fn split_into_categories(&self, ids: Vec<(Uuid, usize)>) -> AbsRecord {
         let mut record = AbsRecord::default();
         for (uuid, id) in ids {
-            debug!(?uuid, id, "Splitting into categories");
+            debug!(%uuid, id, "Splitting into categories");
             record.all.insert(id);
             for (cat, cat_ids) in &self.config.categories {
                 if cat_ids.contains(&uuid) {

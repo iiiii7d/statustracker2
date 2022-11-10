@@ -11,7 +11,7 @@ use rocket::{
     routes, Request, Response, State,
 };
 use serde::Serialize;
-use tokio::sync::RwLock;
+use tokio::{sync::RwLock, time::Instant};
 use tracing::{error, info};
 use uuid::Uuid;
 
@@ -116,10 +116,13 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
 
     let h = tokio::spawn(async move {
         loop {
+            let start = Instant::now();
             let mut tracker = tracker.write().await;
             let _ = tracker.run().await.map_err(|e| error!("{e}"));
             drop(tracker);
-            tokio::time::sleep(Duration::from_secs(60)).await;
+            let time_taken = Instant::now() - start;
+            info!(?time_taken);
+            tokio::time::sleep(Duration::from_secs(60) - time_taken).await;
         }
     });
     let _ = r.launch().await?;
