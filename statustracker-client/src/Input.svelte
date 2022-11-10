@@ -50,7 +50,7 @@
 <label for="to">to </label><input type="datetime-local" id="to" bind:value={to} />
 <label for="player">for player </label><input type="text" id="player" bind:value={player} />
 <button on:click={query}>Query</button><br>
-{#if playerStats && player === origPlayer}
+{#if playerStats && player === origPlayer && player !== ""}
   <span id="player-stats"><b>{player}</b> has played
     for <b>{playerStats.totalTime}</b> between <b>{playerStats.from}</b> and <b>{playerStats.to}</b>,
     last seen <b>{playerStats.lastLeft}</b></span>

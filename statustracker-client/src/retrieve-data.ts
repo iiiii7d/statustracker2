@@ -59,11 +59,14 @@ export async function retrievePlayerCounts(
   let y: Map<string, number[]> = new Map();
   let count = 0;
   let push = (k: string, n: number) => {
-    if (!y.has(k))
+    if (!y.has(k)) {
       y.set(
         k,
-        Array(count).map((_) => NaN),
+        Array.from(Array(count).keys()).map((i) => {
+          return isNaN(y.get("all")?.at(i) ?? NaN) ? NaN : 0;
+        }),
       );
+    }
     y.get(k)?.push(n);
   };
   let current: Map<string, number> = new Map();

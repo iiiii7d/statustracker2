@@ -11,27 +11,33 @@
   
   onMount(retrievePlayerCounts);
 
+  function generateLine(k: string, d: number[], i: number, avgSpan?: [number, string, string]): any {
+    return {
+      tension: .25, // TODO easter egg
+      label: `${k}${avgSpan ? ` (Rolling average ${avgSpan[1]})` : ""}`,
+      data: avgSpan ? d.map((datum, i) => {
+        if (isNaN(datum)) return NaN;
+        let slice = d.slice(Math.max(i - avgSpan[0], 0), Math.min(i + avgSpan[0] + 1, d.length))
+        .filter(a => !isNaN(a));
+        return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
+      }) : d,
+      borderColor: lineColors[i % lineColors.length] + (avgSpan?.at(2) ?? "1"),
+      pointRadius: 0,
+      pointHitRadius: 5,
+      spanGaps: true
+    }
+  }
+
   let chartData: any;
   $: chartData = {
     labels: $data.x,
     datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
       console.error(k, d)
-      return [{
-        tension: .25, // TODO easter egg
-        label: k,
-        data: d,
-        borderColor: lineColors[i % lineColors.length],
-      }, {
-        tension: .25, // TODO easter egg
-        label: `${k} (rolling average 1h)`,
-        data: d.map((datum, i) => {
-          if (isNaN(datum)) return NaN;
-          let slice = d.slice(Math.max(i - 30, 0), Math.min(i + 31, d.length)).filter(a => !isNaN(a));
-          return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
-        }),
-        borderColor: lineColors[i % lineColors.length]+"5",
-        pointRadius: 0
-      }]
+      return [
+        generateLine(k, d, i),
+        generateLine(k, d, i, [30, "1h", "8"]),
+        generateLine(k, d, i, [30*24, "1d", "f"])
+      ]
     })
   }
   let options: any;
