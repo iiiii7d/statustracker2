@@ -1,13 +1,15 @@
 <script lang="ts">
   import moment from "moment";
+  import { onMount } from "svelte";
   import { retrievePlayerCounts } from "./retrieve-data";
   import { playerActiveTimes } from "./stores";
   let origPlayer = "";
 
-  let from = "";
-  let to = "";
+  let from = moment().subtract(1, "d").local(true).toISOString(true).slice(0, 16);
+  let to = moment().add(1, "m").local(true).toISOString(true).slice(0, 16);
   let player = "";
   $: player = player.trim()
+  onMount(query);
 
   function query() {
     origPlayer = player;
@@ -40,6 +42,10 @@
     b {
       color: #fc0;
     }
+  }
+
+  * {
+    user-select: none;
   }
 </style>
 

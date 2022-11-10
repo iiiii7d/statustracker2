@@ -2,6 +2,8 @@
 
 Track players on a Minecraft server through their Dynmap
 
+Made by 7d for the Minecart Rapid Transit server
+
 **Still WIP! Things can and will break**
 
 ## Usage

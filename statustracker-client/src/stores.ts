@@ -10,4 +10,4 @@ export const data = writable<{
 });
 export const playerActiveTimes = writable<[moment.Moment, moment.Moment][]>([]);
 
-export const lineColors = ["#eee", "#8c0", "#c59", "#f80", "#088"];
+export const lineColors = ["#eee", "#8c0", "#8cf", "#c59", "#f80", "#088"];

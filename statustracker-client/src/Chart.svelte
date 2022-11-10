@@ -2,14 +2,10 @@
   import { Chart, registerables } from 'chart.js';
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
-  import { onMount } from 'svelte';
   import { Line } from 'svelte-chartjs';
-  import { retrievePlayerCounts } from "./retrieve-data";
   import { data, lineColors, playerActiveTimes } from "./stores";
 
   Chart.register(...registerables, annotationPlugin);
-  
-  onMount(retrievePlayerCounts);
 
   function generateLine(k: string, d: number[], i: number, avgSpan?: [number, string, string]): any {
     return {
@@ -32,7 +28,6 @@
   $: chartData = {
     labels: $data.x,
     datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
-      console.error(k, d)
       return [
         generateLine(k, d, i),
         generateLine(k, d, i, [30, "1h", "8"]),
