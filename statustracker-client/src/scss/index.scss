@@ -22,6 +22,7 @@ hr {
 
 a {
   color: #fc0;
+  @include transition-all;
 
   &:hover {
     color: #8c0;
