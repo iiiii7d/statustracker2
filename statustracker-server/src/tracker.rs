@@ -40,6 +40,10 @@ pub struct StatusTracker {
 impl StatusTracker {
     #[tracing::instrument(skip_all)]
     pub async fn new(config: Config) -> Result<Self> {
+        debug!("Checking for `all` category");
+        if config.categories.keys().contains::<Category>(&"all".into()) {
+            return Err(eyre!("Category named `all` found"));
+        }
         info!("Creating client");
         let client = Client::with_options(
             ClientOptions::parse(std::env::var(config.mongodb_uri.to_string())?).await?,
