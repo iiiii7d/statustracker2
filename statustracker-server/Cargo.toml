@@ -12,7 +12,7 @@ reqwest = { version = "^0.11.12", features = ["json"] }
 url = { version = "^2.3.1", features = ["serde"] }
 smol_str = "^0.1.23"
 uuid = { version = "^1.2.1", features = ["serde"] }
-rocket = { version = "^0.5.0-rc.2", features = ["msgpack", "json"] }
+rocket = { version = "^0.5.0-rc.2", features = ["msgpack"] }
 tokio = { version = "^1.21.2", features = ["full"] }
 futures = "^0.3.25"
 serde = "^1.0.147"

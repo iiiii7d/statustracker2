@@ -5,9 +5,9 @@ use futures::stream::StreamExt;
 use mongodb::bson::doc;
 use rocket::{
     fairing::{Fairing, Info, Kind},
-    http::{Header, Status},
+    http::{uri::Host, Header, Status},
     response,
-    response::{content, Responder},
+    response::{content, Redirect, Responder},
     routes, Request, Response, State,
 };
 use serde::Serialize;
@@ -58,7 +58,6 @@ async fn range(
     to: HourTimestamp,
 ) -> Result<CustomMsgPack<Vec<Hour>>, String> {
     let a = tracker
-        .inner()
         .read()
         .await
         .database
@@ -86,7 +85,7 @@ async fn range(
 #[rocket::get("/name_map")]
 async fn name_map(tracker: &State<Arc<RwLock<StatusTracker>>>) -> CustomMsgPack<Vec<String>> {
     info!("Retrieving name map");
-    let a = &tracker.inner().read().await.name_map;
+    let a = &tracker.read().await.name_map;
     CustomMsgPack(
         a.data
             .iter()
@@ -105,10 +104,27 @@ async fn uuid_route(name: &str) -> Result<CustomMsgPack<Option<String>>, String>
     ))
 }
 
+#[rocket::get("/")]
+async fn redirect_to_client(
+    tracker: &State<Arc<RwLock<StatusTracker>>>,
+    host: &Host<'_>,
+) -> Redirect {
+    info!(%host, "Redirecting to client");
+    let hosted_over_http = tracker.read().await.config.hosted_over_http;
+    Redirect::to(format!(
+        "https://iiiii7d.github.io/statustracker2/?server=http{}://{}",
+        if hosted_over_http { "" } else { "s" },
+        host
+    ))
+}
+
 pub async fn start_server(tracker: StatusTracker) -> Result<()> {
     let tracker = Arc::new(RwLock::new(tracker));
     let r = rocket::build()
-        .mount("/", routes![range, name_map, uuid_route])
+        .mount(
+            "/",
+            routes![range, name_map, uuid_route, redirect_to_client],
+        )
         .attach(CORS)
         .manage(Arc::clone(&tracker))
         .ignite()

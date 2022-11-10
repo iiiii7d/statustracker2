@@ -22,10 +22,13 @@ use crate::{
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
-    categories: HashMap<Category, Vec<Uuid>>,
-    dynmap_link: Url,
-    mongodb_uri: SmolStr,
-    database_name: SmolStr,
+    #[serde(default)]
+    pub categories: HashMap<Category, Vec<Uuid>>,
+    pub dynmap_link: Url,
+    pub mongodb_uri: SmolStr,
+    pub database_name: SmolStr,
+    #[serde(default)]
+    pub hosted_over_http: bool,
 }
 
 pub struct StatusTracker {
