@@ -88,8 +88,8 @@ button {
   }
 
   &:active {
-    background-color: #f80;
-    box-shadow: #f808 0px 0px;
+    background-color: #f80 !important;
+    box-shadow: #f808 0px 0px !important;
     transform: translateY(3px);
     -webkit-transform: translateY(3px);
     -moz-transform: translateY(3px);

@@ -3,11 +3,11 @@
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, lineColors, playerActiveTimes } from "../stores";
+  import { data, lineColors, playerActiveTimes, rollingAverages } from "../stores";
 
   Chart.register(...registerables, annotationPlugin);
 
-  function generateLine(k: string, d: number[], i: number, avgSpan?: [number, string, string]): any {
+  function generateLine(k: string, d: number[], i: number, color: string, avgSpan?: [number, string]): any {
     return {
       tension: .25,
       label: `${k}${avgSpan ? ` (Rolling average ${avgSpan[1]})` : ""}`,
@@ -17,7 +17,7 @@
         .filter(a => !isNaN(a));
         return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
       }) : d,
-      borderColor: lineColors[i % lineColors.length] + (avgSpan?.at(2) ?? "1"),
+      borderColor: lineColors[i % lineColors.length] + color,
       pointRadius: 0,
       pointHitRadius: 5,
       spanGaps: true
@@ -28,11 +28,14 @@
   $: chartData = {
     labels: $data.x,
     datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
-      return [
-        generateLine(k, d, i),
-        generateLine(k, d, i, [30, "1h", "8"]),
-        generateLine(k, d, i, [30*24, "1d", "f"])
-      ]
+      let lines = [];
+      const hex = "f8421";
+      if ($rollingAverages[10080]) lines.push(generateLine(k, d, i, hex[lines.length], [5040, "7d"]))
+      if ($rollingAverages[1440]) lines.push(generateLine(k, d, i, hex[lines.length], [720, "24h"]))
+      if ($rollingAverages[720]) lines.push(generateLine(k, d, i, hex[lines.length], [360, "12h"]))
+      if ($rollingAverages[60]) lines.push(generateLine(k, d, i, hex[lines.length], [30, "1h"]))
+      if ($rollingAverages[0]) lines.push(generateLine(k, d, i, hex[lines.length]));
+      return lines;
     })
   }
   let options: any;

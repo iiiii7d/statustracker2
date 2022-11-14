@@ -1,8 +1,9 @@
 <script lang="ts">
   import moment from "moment";
   import { onMount } from "svelte";
+  import CheckboxButton from "../comps/CheckboxButton.svelte";
   import { retrievePlayerCounts } from "../retrieve-data";
-  import { playerActiveTimes } from "../stores";
+  import { playerActiveTimes, rollingAverages } from "../stores";
   let origPlayer = "";
 
   let from = moment().subtract(1, "d").local(true).toISOString(true).slice(0, 16);
@@ -63,3 +64,9 @@
 {:else if player === origPlayer && player !== ""}
   <span id="player-stats">No data found for <b>{player}</b></span>
 {/if}
+<span>Rolling Averages</span>
+<CheckboxButton bind:value={$rollingAverages[0]}>Raw</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverages[60]}>1h</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverages[720]}>12h</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverages[1440]}>1d</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverages[10080]}>7d</CheckboxButton>
