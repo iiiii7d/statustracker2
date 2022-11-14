@@ -3,7 +3,7 @@
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, lineColors, playerActiveTimes } from "./stores";
+  import { data, lineColors, playerActiveTimes } from "../stores";
 
   Chart.register(...registerables, annotationPlugin);
 

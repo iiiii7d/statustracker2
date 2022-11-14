@@ -147,7 +147,7 @@ export async function retrievePlayerData(hours: Hour[], player: string) {
     }
   };
   let join = (h: number, m: number = 0) => {
-    start = moment.unix(h * 3600 + m * 60).utc();
+    if (start === null) start = moment.unix(h * 3600 + m * 60).utc();
   };
 
   for (

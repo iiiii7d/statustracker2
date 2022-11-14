@@ -1,8 +1,8 @@
 <script lang="ts">
   import moment from "moment";
   import { onMount } from "svelte";
-  import { retrievePlayerCounts } from "./retrieve-data";
-  import { playerActiveTimes } from "./stores";
+  import { retrievePlayerCounts } from "../retrieve-data";
+  import { playerActiveTimes } from "../stores";
   let origPlayer = "";
 
   let from = moment().subtract(1, "d").local(true).toISOString(true).slice(0, 16);

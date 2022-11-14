@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { data, lineColors } from "./stores";
+  import { data, lineColors } from "../stores";
   let percentages: [string, number][];
   $: allCount = $data.y.get("all")?.filter(v => !isNaN(v)).length ?? 0;
   $: percentages = Array.from($data.y.entries()).map(([k, d]) => {
