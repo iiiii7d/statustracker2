@@ -97,6 +97,9 @@ export async function retrievePlayerCounts(
         let record: Record | undefined = h.deltas[m.toString()];
         if (record === undefined) {
         } else if ("all" in record) {
+          for (let cat of current.keys()) {
+            current.set(cat, 0);
+          }
           current.set("all", record.all.length);
           for (let [cat, list] of Object.entries(record.categories)) {
             current.set(cat, list.length);
@@ -147,7 +150,7 @@ export async function retrievePlayerData(hours: Hour[], player: string) {
     }
   };
   let join = (h: number, m: number = 0) => {
-    start = moment.unix(h * 3600 + m * 60).utc();
+    if (start === null) start = moment.unix(h * 3600 + m * 60).utc();
   };
 
   for (

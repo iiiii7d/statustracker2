@@ -1,7 +1,7 @@
 {
   "name": "statustracker-client",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@msgpack/msgpack": "^2.8.0",
-    "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "@sveltejs/vite-plugin-svelte": "^1.1.1",
     "@tsconfig/svelte": "^3.0.0",
     "autoprefixer": "^10.4.13",
     "axios": "^1.1.3",
@@ -19,19 +19,20 @@
     "chartjs-adapter-moment": "^1.0.0",
     "chartjs-plugin-annotation": "^2.0.1",
     "moment": "^2.29.4",
-    "postcss": "^8.4.18",
+    "postcss": "^8.4.19",
+    "postcss-scss": "^4.0.5",
     "sass": "^1.56.1",
-    "svelte": "^3.52.0",
+    "svelte": "^3.53.1",
     "svelte-chartjs": "^3.0.1",
     "svelte-check": "^2.9.2",
     "svelte-markdown": "^0.2.3",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.1",
     "typescript": "^4.8.4",
-    "vite": "^3.2.3",
-    "vite-plugin-top-level-await": "^1.2.1"
+    "vite": "^3.2.3"
   },
   "postcss": {
+    "syntax": "postcss-scss",
     "plugins": {
       "autoprefixer": {}
     }
