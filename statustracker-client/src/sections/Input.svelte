@@ -63,7 +63,7 @@
     last seen <b>{playerStats.lastLeft}</b></span>
 {:else if player === origPlayer && player !== ""}
   <span id="player-stats">No data found for <b>{player}</b></span>
-{/if}
+{/if}<br>
 <span>Rolling Averages</span>
 <CheckboxButton bind:value={$rollingAverages[0]}>Raw</CheckboxButton>
 <CheckboxButton bind:value={$rollingAverages[60]}>1h</CheckboxButton>
