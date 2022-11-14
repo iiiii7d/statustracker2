@@ -7,16 +7,25 @@
 
   Chart.register(...registerables, annotationPlugin);
 
+  let cache = new Map<[number[], number], number[]>();
+  function getRollingAverage(d: number[], span: number): number[] {
+    let res = cache.get([d, span]);
+    if (res !== undefined) return res
+    res = d.map((datum, i) => {
+      if (isNaN(datum)) return NaN;
+      let slice = d.slice(Math.max(i - span, 0), Math.min(i + span + 1, d.length))
+      .filter(a => !isNaN(a));
+      return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
+    })
+    cache.set([d, span], res)
+    return res
+  }
+
   function generateLine(k: string, d: number[], i: number, color: string, avgSpan?: [number, string]): any {
     return {
       tension: .25,
       label: `${k}${avgSpan ? ` (Rolling average ${avgSpan[1]})` : ""}`,
-      data: avgSpan ? d.map((datum, i) => {
-        if (isNaN(datum)) return NaN;
-        let slice = d.slice(Math.max(i - avgSpan[0], 0), Math.min(i + avgSpan[0] + 1, d.length))
-        .filter(a => !isNaN(a));
-        return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
-      }) : d,
+      data: avgSpan ? getRollingAverage(d, avgSpan[0]) : d,
       borderColor: lineColors[i % lineColors.length] + color,
       pointRadius: 0,
       pointHitRadius: 5,
