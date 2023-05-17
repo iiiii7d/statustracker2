@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: "19.x"
           #cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --no-frozen-lockfile
       - run: pnpm run build
       - run: cd dist; echo > .nojekyll; cd ..
       - name: Deploy
