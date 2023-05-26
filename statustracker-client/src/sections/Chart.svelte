@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { Chart, registerables } from 'chart.js';
+  import { Chart, registerables, type ChartData, type Point, type CoreChartOptions, type ElementChartOptions, type PluginChartOptions, type DatasetChartOptions, type ScaleChartOptions, type LineControllerChartOptions } from 'chart.js';
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
   import { data, lineColors, playerActiveTimes, rollingAverages } from "../stores";
+  import type { _DeepPartialObject } from 'chart.js/dist/types/utils';
 
   Chart.register(...registerables, annotationPlugin);
 
@@ -33,7 +34,7 @@
     }
   }
 
-  let chartData: any;
+  let chartData: ChartData<"line", (number | Point)[], unknown>;
   $: chartData = {
     labels: $data.x,
     datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
@@ -47,7 +48,7 @@
       return lines;
     })
   }
-  let options: any;
+  let options: _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
   $: options = {
     plugins: {
       annotation: {

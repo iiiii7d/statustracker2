@@ -4,7 +4,6 @@
   import Input from "./Input.svelte";
   import { server } from "../retrieve-data";
   import RoleStats from "./RoleStats.svelte";
-  import CheckboxButton from "../comps/CheckboxButton.svelte";
   
 </script>
 

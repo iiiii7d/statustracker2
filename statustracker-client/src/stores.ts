@@ -19,6 +19,3 @@ export const rollingAverages = writable({
   1440: false,
   10080: false,
 });
-function totalRollingAverages(o: any) {
-  return Object.values(o).filter((v) => v).length;
-}

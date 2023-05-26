@@ -19,4 +19,8 @@ parserOptions:
   project: ["tsconfig.json"]
   extraFileExtensions: [".svelte"]
 plugins: ["@typescript-eslint", svelte]
-rules: {}
+rules:
+  "@typescript-eslint/no-non-null-assertion": off
+  "@typescript-eslint/no-unsafe-return": off
+  "@typescript-eslint/restrict-template-expressions": off
+  "@typescript-eslint/restrict-plus-operands": off
