@@ -5,14 +5,14 @@
   function toggle() {
     value = !value;
     if (value) {
-      button.setAttribute("checked", "true");
+      button.classList.add("checked");
     } else {
-      button.setAttribute("checked", "false");
+      button.classList.remove("checked");
     }
   }
 </script>
 <style lang="scss">
-  button[checked=true] { 
+  button.checked { 
     background-color: #8c0;
     color: #000;
     border: unset;
@@ -25,4 +25,4 @@
     }
   }
 </style>
-<button on:click={toggle} bind:this={button} checked={value}><slot></slot></button>
+<button on:click={toggle} bind:this={button} class:checked={value}><slot></slot></button>
