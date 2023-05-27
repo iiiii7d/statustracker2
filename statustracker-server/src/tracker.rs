@@ -80,7 +80,7 @@ impl StatusTracker {
             .await;
         let a = a
             .into_iter()
-            .map_ok(|a| a.into())
+            .map_ok(std::convert::Into::into)
             .collect::<mongodb::error::Result<Vec<_>>>()?;
         Ok(a)
     }
@@ -90,7 +90,7 @@ impl StatusTracker {
             .collection::<HourDef>("hours")
             .find_one(doc! {"_id": timestamp}, None)
             .await
-            .map(|a| a.map(|a| a.into()))?)
+            .map(|a| a.map(std::convert::Into::into))?)
     }
     #[tracing::instrument(skip(self))]
     pub async fn save_hour(&self, hour: Hour) -> Result<()> {
@@ -198,7 +198,7 @@ impl StatusTracker {
             .await?
             .unwrap_or_else(|| Hour::new(h_ts));
         info!(min_ts, "Adding record");
-        hour.records[(min_ts - h_ts as u64 * 60) as usize] = Some(Arc::new(record));
+        hour.records[(min_ts - u64::from(h_ts) * 60) as usize] = Some(Arc::new(record));
         self.save_hour(hour).await?;
         Ok(())
     }

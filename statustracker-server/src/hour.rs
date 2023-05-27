@@ -41,6 +41,7 @@ pub struct Hour {
     pub records: [Option<Arc<AbsRecord>>; 60],
 }
 impl Hour {
+    #[must_use]
     pub fn new(timestamp: HourTimestamp) -> Self {
         Self {
             _id: timestamp,
@@ -184,5 +185,145 @@ impl From<Hour> for HourDef {
             prev_record = Some(Arc::clone(&record));
         }
         hour
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        collections::{HashMap, HashSet},
+        sync::Arc,
+    };
+
+    use crate::{
+        hour::{AbsRecord, Hour, HourDef, Record},
+        utils::BitField64,
+    };
+
+    #[test]
+    pub fn hour_def_to_hour() {
+        let hd = HourDef {
+            _id: 0,
+            tracked_mins: {
+                let mut b = BitField64::default();
+                b.turn_on(0);
+                b.turn_on(1);
+                b.turn_on(3);
+                b
+            },
+            deltas: {
+                let mut d = HashMap::new();
+                d.insert(
+                    "0".into(),
+                    Record::Abs(AbsRecord {
+                        all: HashSet::from([0]),
+                        categories: HashMap::default(),
+                    }),
+                );
+                d.insert(
+                    "1".into(),
+                    Record::Delta {
+                        joined: HashSet::from([1]),
+                        joined_categories: HashMap::default(),
+                        left: HashSet::from([0]),
+                        left_categories: HashMap::default(),
+                    },
+                );
+                d.insert(
+                    "3".into(),
+                    Record::Abs(AbsRecord {
+                        all: HashSet::from([1, 2]),
+                        categories: HashMap::default(),
+                    }),
+                );
+                d
+            },
+        };
+        let d = Hour::from(hd);
+        assert_eq!(
+            d.records[0].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([0]),
+                categories: HashMap::default(),
+            })
+        );
+        assert_eq!(
+            d.records[1].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([1]),
+                categories: HashMap::default(),
+            })
+        );
+        assert_eq!(d.records[2].as_ref().map(|a| (**a).to_owned()), None);
+        assert_eq!(
+            d.records[3].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([1, 2]),
+                categories: HashMap::default(),
+            })
+        );
+    }
+    #[test]
+    pub fn hour_to_hour_def() {
+        let h = Hour {
+            _id: 0,
+            records: {
+                let mut r = [(); 60].map(|_| None);
+                r[0] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([0]),
+                    categories: HashMap::default(),
+                }));
+                r[1] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([1]),
+                    categories: HashMap::default(),
+                }));
+                r[3] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([1, 2]),
+                    categories: HashMap::default(),
+                }));
+                r
+            },
+        };
+        let hd = HourDef::from(h);
+        assert_eq!(
+            hd,
+            HourDef {
+                _id: 0,
+                tracked_mins: {
+                    let mut b = BitField64::default();
+                    b.turn_on(0);
+                    b.turn_on(1);
+                    b.turn_on(3);
+                    b
+                },
+                deltas: {
+                    let mut d = HashMap::new();
+                    d.insert(
+                        "0".into(),
+                        Record::Abs(AbsRecord {
+                            all: HashSet::from([0]),
+                            categories: HashMap::default(),
+                        }),
+                    );
+                    d.insert(
+                        "1".into(),
+                        Record::Delta {
+                            joined: HashSet::from([1]),
+                            joined_categories: HashMap::default(),
+                            left: HashSet::from([0]),
+                            left_categories: HashMap::default(),
+                        },
+                    );
+                    d.insert(
+                        "3".into(),
+                        Record::Abs(AbsRecord {
+                            all: HashSet::from([1, 2]),
+                            categories: HashMap::default(),
+                        }),
+                    );
+                    d
+                },
+            }
+        );
     }
 }
