@@ -38,9 +38,21 @@ export async function getPlayerUuid(player: string): Promise<string | null> {
   return (await getMsgPack(`${server}/uuid/${player}`)) ?? null;
 }
 
+export async function getPlayerJoinTimes(
+  from: number,
+  to: number,
+  player: string,
+): Promise<[moment.Moment, moment.Moment][]> {
+  const a =
+    (await getMsgPack<[MinuteTimestamp, MinuteTimestamp][]>(
+      `${server}/player/${player}?from=${from}&to=${to}`,
+    )) ?? [];
+  return a.map(([a, b]) => [moment.unix(a * 60), moment.unix(b * 60)]);
+}
+
 export async function getLines(
-  from = 0,
-  to = 4294967295,
+  from: number,
+  to: number,
   rollingAverages: RollingAverage[] = [0],
 ): Promise<{
   x: moment.Moment[];

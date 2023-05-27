@@ -23,7 +23,6 @@
     }
   }
 
-  let chartData: ChartData<"line", (number | Point)[], moment.Moment>;
   $: chartData = {
     labels: $data.x,
     datasets: Array.from($data.y.entries()).flatMap(([ra, m], i) => {
@@ -31,8 +30,7 @@
         return generateLine(cat, y, $data.y.size - 1 - i, j, ra)
       })
     }),
-  }
-  let options: _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
+  } as ChartData<"line", (number | Point)[], moment.Moment>;
   $: options = {
     animation: false,
     plugins: {
@@ -41,6 +39,7 @@
           drawTime: 'beforeDraw'
         },
         annotations: $playerActiveTimes.map(([from, to]) => {
+          console.log(from, to);
           return {
             type: 'box',
             backgroundColor: '#333',
@@ -53,12 +52,12 @@
               content: `${from.local().format("HH:mm")} → ${to.local().format("HH:mm")}`,
               color: "#fc0",
             },
-            enter({element}: any) {
-              element.label.options.display = true;
+            enter({element}) {
+              if (element.label) element.label.options.display = true;
               return true;
             },
-            leave({element}: any) {
-              element.label.options.display = false;
+            leave({element}) {
+              if (element.label) element.label.options.display = false;
               return true;
             }
           }
@@ -82,7 +81,7 @@
         min: 0,
       },
     }
-  };
+  } as _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
 </script>
 <Line
   data={chartData} {options}

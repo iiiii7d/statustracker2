@@ -173,8 +173,10 @@ impl STDatabase {
                 leave(min, &mut start, &mut out);
                 continue
             };
-            if record.all.contains(&player) && start.is_none() {
-                start = Some(min);
+            if record.all.contains(&player) {
+                if start.is_none() {
+                    start = Some(min)
+                };
             } else {
                 leave(min, &mut start, &mut out);
             }
