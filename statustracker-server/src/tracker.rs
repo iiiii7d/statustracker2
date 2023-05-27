@@ -1,4 +1,4 @@
-use std::{collections::HashMap, time::SystemTime};
+use std::{collections::HashMap, sync::Arc, time::SystemTime};
 
 use color_eyre::eyre::{eyre, Result};
 use futures::StreamExt;
@@ -16,7 +16,7 @@ use tracing::{debug, info, trace};
 use uuid::{Bytes, Uuid};
 
 use crate::{
-    hour::{AbsRecord, Hour},
+    hour::{AbsRecord, Hour, HourDef},
     name_to_uuid::name_to_uuid,
     utils::{Category, HourTimestamp, MinuteTimestamp},
 };
@@ -65,7 +65,7 @@ impl StatusTracker {
     pub async fn get_hours(&self, from: HourTimestamp, to: HourTimestamp) -> Result<Vec<Hour>> {
         let a = self
             .database
-            .collection::<Hour>("hours")
+            .collection::<HourDef>("hours")
             .find(
                 doc! {
                     "_id": {
@@ -78,23 +78,27 @@ impl StatusTracker {
             .await?
             .collect::<Vec<_>>()
             .await;
-        let a = a.into_iter().collect::<mongodb::error::Result<Vec<_>>>()?;
+        let a = a
+            .into_iter()
+            .map_ok(|a| a.into())
+            .collect::<mongodb::error::Result<Vec<_>>>()?;
         Ok(a)
     }
     pub async fn get_hour(&self, timestamp: HourTimestamp) -> Result<Option<Hour>> {
         Ok(self
             .database
-            .collection("hours")
+            .collection::<HourDef>("hours")
             .find_one(doc! {"_id": timestamp}, None)
-            .await?)
+            .await
+            .map(|a| a.map(|a| a.into()))?)
     }
     #[tracing::instrument(skip(self))]
     pub async fn save_hour(&self, hour: Hour) -> Result<()> {
         info!("Saving hour");
-        let mut b = to_bson(&hour)?;
+        let mut b = to_bson(&HourDef::from(hour.to_owned()))?;
         b.as_document_mut().unwrap().remove("_id");
         self.database
-            .collection::<Hour>("hours")
+            .collection::<HourDef>("hours")
             .update_one(
                 doc! {"_id": hour._id},
                 doc! {"$set": b},
@@ -183,17 +187,18 @@ impl StatusTracker {
     }
     #[tracing::instrument(skip(self))]
     pub async fn add_record(&self, record: AbsRecord) -> Result<()> {
-        let timestamp: MinuteTimestamp = SystemTime::now()
+        let min_ts: MinuteTimestamp = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
             .as_secs()
             / 60;
+        let h_ts = (min_ts / 60) as HourTimestamp;
         let mut hour = self
-            .get_hour((timestamp / 60) as HourTimestamp)
+            .get_hour(h_ts)
             .await?
-            .unwrap_or_else(|| Hour::new(timestamp, record.to_owned()));
-        info!(timestamp, "Adding record");
-        hour.add_record(timestamp, record);
+            .unwrap_or_else(|| Hour::new(h_ts));
+        info!(min_ts, "Adding record");
+        hour.records[(min_ts - h_ts as u64 * 60) as usize] = Some(Arc::new(record));
         self.save_hour(hour).await?;
         Ok(())
     }
