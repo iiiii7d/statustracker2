@@ -140,7 +140,7 @@ impl StatusTracker {
                     .as_str()
                     .ok_or_else(|| eyre!("Field `account` in player object is not string"))
             })
-            .map_ok(|o| o.into())
+            .map_ok(std::convert::Into::into)
             .collect::<Result<Vec<_>, _>>()
     }
     #[tracing::instrument(skip(self))]
@@ -160,7 +160,7 @@ impl StatusTracker {
                     self.name_map.data.push(*uuid.as_bytes());
                     self.name_map.data.len() - 1
                 });
-            uuids.push((uuid, index))
+            uuids.push((uuid, index));
         }
         Ok(uuids)
     }

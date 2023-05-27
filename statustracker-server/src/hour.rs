@@ -27,7 +27,7 @@ pub enum Record {
 
 impl Default for Record {
     fn default() -> Self {
-        Self::Abs(Default::default())
+        Self::Abs(AbsRecord::default())
     }
 }
 
@@ -38,7 +38,7 @@ pub struct Hour {
     pub deltas: HashMap<SmolStr, Record>,
 }
 impl Hour {
-    pub fn new(timestamp: MinuteTimestamp, abs: AbsRecord) -> Self {
+    #[must_use] pub fn new(timestamp: MinuteTimestamp, abs: AbsRecord) -> Self {
         let min = timestamp - timestamp / 60 * 60;
         Self {
             _id: (timestamp / 60) as u32,
@@ -78,15 +78,15 @@ impl Hour {
                     } else {
                         continue;
                     };
-                    abs_record.all = abs_record.all.union(joined).cloned().collect();
-                    abs_record.all = abs_record.all.difference(left).cloned().collect();
+                    abs_record.all = abs_record.all.union(joined).copied().collect();
+                    abs_record.all = abs_record.all.difference(left).copied().collect();
                     for (cat, other_list) in joined_categories {
                         let list = abs_record.categories.entry(cat.to_owned()).or_default();
-                        *list = list.union(other_list).cloned().collect();
+                        *list = list.union(other_list).copied().collect();
                     }
                     for (cat, other_list) in left_categories {
                         let list = abs_record.categories.entry(cat.to_owned()).or_default();
-                        *list = list.difference(other_list).cloned().collect();
+                        *list = list.difference(other_list).copied().collect();
                     }
                 }
             }
@@ -97,13 +97,11 @@ impl Hour {
 
     #[tracing::instrument(skip(self, abs))]
     pub fn add_record(&mut self, timestamp: MinuteTimestamp, abs: AbsRecord) {
-        let minute_no = (timestamp - self._id as u64 * 60) as u8;
-        if minute_no >= 60 {
-            panic!("{minute_no}");
-        }
-        self.tracked_mins.turn_on(minute_no as i32);
+        let minute_no = (timestamp - u64::from(self._id) * 60) as u8;
+        assert!(minute_no < 60, "{minute_no}");
+        self.tracked_mins.turn_on(i32::from(minute_no));
 
-        if minute_no == 0 || !self.tracked_mins.is_on(minute_no as i32 - 1) {
+        if minute_no == 0 || !self.tracked_mins.is_on(i32::from(minute_no) - 1) {
             debug!(minute_no, "Adding Abs record");
             self.deltas
                 .insert(minute_no.to_string().into(), Record::Abs(abs));
@@ -122,7 +120,7 @@ impl Hour {
         let empty_hash_set = &HashSet::new();
 
         let delta = Record::Delta {
-            joined: abs.all.difference(&latest_abs.all).cloned().collect(),
+            joined: abs.all.difference(&latest_abs.all).copied().collect(),
             joined_categories: {
                 let mut joined = HashMap::new();
                 for cat in abs
@@ -137,7 +135,7 @@ impl Hour {
                         .get(cat)
                         .unwrap_or(empty_hash_set)
                         .difference(latest_abs.categories.get(cat).unwrap_or(empty_hash_set))
-                        .cloned()
+                        .copied()
                         .collect::<HashSet<_>>();
                     if !joined_cat.is_empty() {
                         joined.insert(cat.to_owned(), joined_cat);
@@ -145,7 +143,7 @@ impl Hour {
                 }
                 joined
             },
-            left: latest_abs.all.difference(&abs.all).cloned().collect(),
+            left: latest_abs.all.difference(&abs.all).copied().collect(),
             left_categories: {
                 let mut left = HashMap::new();
                 for cat in abs
@@ -160,7 +158,7 @@ impl Hour {
                         .get(cat)
                         .unwrap_or(empty_hash_set)
                         .difference(abs.categories.get(cat).unwrap_or(empty_hash_set))
-                        .cloned()
+                        .copied()
                         .collect::<HashSet<_>>();
                     if !left_cat.is_empty() {
                         left.insert(cat.to_owned(), left_cat);
