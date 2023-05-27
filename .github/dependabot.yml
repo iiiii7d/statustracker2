@@ -11,3 +11,9 @@ updates:
       interval: "weekly"
     
     target-branch: "dev"
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/statustracker-client" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    
+    target-branch: "dev"
