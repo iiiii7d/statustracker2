@@ -15,13 +15,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: statustracker2-server
+            artifact_name: statustracker-server
             asset_name: statustracker2-ubuntu
           - os: windows-latest
-            artifact_name: statustracker2-server.exe
+            artifact_name: statustracker-server.exe
             asset_name: statustracker2-windows.exe
           - os: macos-latest
-            artifact_name: statustracker2-server
+            artifact_name: statustracker-server
             asset_name: statustracker2-macos
 
     steps:
