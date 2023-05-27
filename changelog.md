@@ -1,5 +1,12 @@
 ## Changelog
 
+### v2.2.0 (28/5/23)
+
+- Change internals of server a lot
+- `Loading...` now shows when retrieving data
+- Rolling averages and player active times are now processed server-side
+- Remove chart animations to make the chart faster
+
 ### v2.1.0 (14/11/22)
 
 - Togglable visiblility of rolling averages
