@@ -10,6 +10,52 @@ use smol_str::SmolStr;
 
 use crate::utils::{BitField64, Category, HourTimestamp};
 
+#[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq)]
+pub struct RollingAvgRecord {
+    pub all: f32,
+    pub categories: HashMap<Category, f32>,
+}
+impl From<AbsRecord> for RollingAvgRecord {
+    fn from(value: AbsRecord) -> Self {
+        Self {
+            all: value.all.len() as f32,
+            categories: value
+                .categories
+                .into_iter()
+                .map(|(a, b)| (a, b.len() as f32))
+                .collect(),
+        }
+    }
+}
+impl From<&[AbsRecord]> for RollingAvgRecord {
+    fn from(value: &[AbsRecord]) -> Self {
+        Self {
+            all: value.into_iter().map(|a| a.all.len() as f32).sum::<f32>() / value.len() as f32,
+            categories: {
+                let mut counts: HashMap<Category, Vec<f32>> = HashMap::new();
+                for a in value {
+                    for (cat, s) in &a.categories {
+                        counts
+                            .entry(cat.to_owned())
+                            .or_default()
+                            .push(s.len() as f32)
+                    }
+                }
+                let max = counts.values().map(|a| a.len()).max();
+                if let Some(max) = max {
+                    for l in counts.values_mut() {
+                        l.extend(vec![0.0; max - l.len()])
+                    }
+                }
+                counts
+                    .into_iter()
+                    .map(|(cat, l)| (cat, l.iter().sum::<f32>() / l.len() as f32))
+                    .collect()
+            },
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq, Eq)]
 pub struct AbsRecord {
     pub all: HashSet<usize>,

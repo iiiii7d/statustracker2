@@ -7,14 +7,21 @@ use rocket::{
     http::{uri::Host, Header, Status},
     response,
     response::{content, Redirect, Responder},
-    routes, Request, Response, State,
+    routes,
+    time::format_description::modifier::Minute,
+    Request, Response, State,
 };
 use serde::Serialize;
 use tokio::{sync::RwLock, time::Instant};
 use tracing::{error, info};
 use uuid::Uuid;
 
-use crate::{hour::Hour, name_to_uuid::name_to_uuid, tracker::StatusTracker, utils::HourTimestamp};
+use crate::{
+    hour::{Hour, RollingAvgRecord},
+    name_to_uuid::name_to_uuid,
+    tracker::StatusTracker,
+    utils::{HourTimestamp, MinuteTimestamp},
+};
 
 #[derive(Debug)]
 struct CustomMsgPack<T>(pub T);
@@ -51,16 +58,18 @@ impl Fairing for CORS {
     }
 }
 
-#[rocket::get("/?<from>&<to>")]
+#[rocket::get("/?<from>&<to>&<range>")]
 async fn range(
     tracker: &State<Arc<RwLock<StatusTracker>>>,
-    from: HourTimestamp,
-    to: HourTimestamp,
-) -> Result<CustomMsgPack<Vec<Hour>>, String> {
+    from: MinuteTimestamp,
+    to: MinuteTimestamp,
+    range: u64,
+) -> Result<CustomMsgPack<Vec<RollingAvgRecord>>, String> {
     let a = tracker
         .read()
         .await
-        .get_hours(from, to)
+        .database
+        .get_rolling_avg(from, to, range)
         .await
         .map_err(|a| format!("Error reading from database: {a}"))?;
     Ok(CustomMsgPack(a))

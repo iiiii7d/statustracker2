@@ -139,6 +139,7 @@
 )]
 
 mod config;
+mod database;
 pub mod hour;
 pub mod name_to_uuid;
 pub mod server;
