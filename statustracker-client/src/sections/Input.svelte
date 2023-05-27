@@ -2,8 +2,8 @@
   import moment from "moment";
   import { onMount } from "svelte";
   import CheckboxButton from "../comps/CheckboxButton.svelte";
-  import { retrievePlayerCounts } from "../retrieve-data";
-  import { playerActiveTimes, rollingAverages } from "../stores";
+  import { getLines } from "../retrieve-data";
+  import { data, playerActiveTimes, rollingAverageSwitches, type RollingAverage } from "../stores";
   let origPlayer = "";
 
   let from = moment().subtract(1, "d").local(true).toISOString(true).slice(0, 16);
@@ -11,13 +11,16 @@
   let player = "";
   $: player = player.trim()
   onMount(query);
+  rollingAverageSwitches.subscribe(query)
 
-  function query() {
+  async function query() {
     origPlayer = player;
-    retrievePlayerCounts(
-      from !== "" ? Math.floor(moment(from).unix()/3600) : 0,
-      to !== "" ? Math.floor(moment(to).unix()/3600) : 4294967295,
-      player
+    $data = await getLines(
+      from !== "" ? Math.floor(moment(from).unix()/60) : 0,
+      to !== "" ? Math.floor(moment(to).unix()/60) : 4294967295,
+      player,
+      Object.entries($rollingAverageSwitches).filter(([_, v]) => v)
+      .map(([k, _]) => parseInt(k) as RollingAverage).sort()
     )
   }
   const version = __APP_VERSION__;
@@ -65,8 +68,8 @@
   <span id="player-stats">No data found for <b>{player}</b></span>
 {/if}<br>
 <span>Rolling Averages</span>
-<CheckboxButton bind:value={$rollingAverages[0]}>Raw</CheckboxButton>
-<CheckboxButton bind:value={$rollingAverages[60]}>1h</CheckboxButton>
-<CheckboxButton bind:value={$rollingAverages[720]}>12h</CheckboxButton>
-<CheckboxButton bind:value={$rollingAverages[1440]}>1d</CheckboxButton>
-<CheckboxButton bind:value={$rollingAverages[10080]}>7d</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverageSwitches[0]}>Raw</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverageSwitches[60]}>1h</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverageSwitches[720]}>12h</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverageSwitches[1440]}>1d</CheckboxButton>
+<CheckboxButton bind:value={$rollingAverageSwitches[10080]}>7d</CheckboxButton>

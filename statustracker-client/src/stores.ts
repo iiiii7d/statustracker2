@@ -3,19 +3,38 @@ import { writable } from "svelte/store";
 
 export const data = writable<{
   x: moment.Moment[];
-  y: Map<string, number[]>;
+  y: Map<RollingAverage, Map<string, number[]>>;
 }>({
   x: [],
   y: new Map(),
 });
 export const playerActiveTimes = writable<[moment.Moment, moment.Moment][]>([]);
 
-export const lineColors = ["#eee", "#8c0", "#8cf", "#c59", "#f80", "#088"];
+export const lineColors = [
+  "#eee",
+  "#8c0",
+  "#8cf",
+  "#c59",
+  "#f80",
+  "#088",
+] as const;
 
-export const rollingAverages = writable({
-  0: true,
-  60: true,
-  720: false,
-  1440: false,
-  10080: false,
-});
+export const rollingAverages = {
+  0: "Raw",
+  60: "1h",
+  720: "12h",
+  1440: "1d",
+  10080: "7d",
+} as const;
+
+export type RollingAverage = keyof typeof rollingAverages;
+
+export const rollingAverageSwitches = writable<Record<RollingAverage, boolean>>(
+  {
+    0: true,
+    60: true,
+    720: false,
+    1440: false,
+    10080: false,
+  },
+);
