@@ -9,6 +9,7 @@ use mongodb::{
     Database,
 };
 use rayon::prelude::*;
+use rocket::time::format_description::modifier::Minute;
 use tracing::info;
 
 use crate::{
@@ -149,5 +150,36 @@ impl STDatabase {
             )
             .await?;
         Ok(())
+    }
+    pub async fn get_player_join_times(
+        &self,
+        from: MinuteTimestamp,
+        to: MinuteTimestamp,
+        player: usize,
+    ) -> Result<Vec<(MinuteTimestamp, MinuteTimestamp)>> {
+        let mins = self.get_minutes(from, to).await?;
+        let mut out = vec![];
+        let mut start: Option<MinuteTimestamp> = None;
+        let leave = |min: MinuteTimestamp,
+                     start: &mut Option<MinuteTimestamp>,
+                     out: &mut Vec<(MinuteTimestamp, MinuteTimestamp)>| {
+            if let Some(in_start) = *start {
+                out.push((in_start, min - 1));
+                *start = None;
+            }
+        };
+        for (min, record) in (from..=to).zip_eq(mins) {
+            let Some(record) = record else {
+                leave(min, &mut start, &mut out);
+                continue
+            };
+            if record.all.contains(&player) && start.is_none() {
+                start = Some(min);
+            } else {
+                leave(min, &mut start, &mut out);
+            }
+        }
+        leave(to + 1, &mut start, &mut out);
+        Ok(out)
     }
 }
