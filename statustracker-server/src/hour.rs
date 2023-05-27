@@ -38,7 +38,8 @@ pub struct Hour {
     pub deltas: HashMap<SmolStr, Record>,
 }
 impl Hour {
-    #[must_use] pub fn new(timestamp: MinuteTimestamp, abs: AbsRecord) -> Self {
+    #[must_use]
+    pub fn new(timestamp: MinuteTimestamp, abs: AbsRecord) -> Self {
         let min = timestamp - timestamp / 60 * 60;
         Self {
             _id: (timestamp / 60) as u32,
@@ -50,6 +51,7 @@ impl Hour {
             deltas: HashMap::from([(min.to_string().into(), Record::Abs(abs))]),
         }
     }
+    #[allow(clippy::unwrap_in_result)]
     #[tracing::instrument(skip(self))]
     pub fn calculate_abs_record(&self, minute_no: u8) -> Option<AbsRecord> {
         let mut abs_record = None;
@@ -73,9 +75,7 @@ impl Hour {
                     left,
                     left_categories,
                 } => {
-                    let abs_record = if let Some(abs_record) = &mut abs_record {
-                        abs_record
-                    } else {
+                    let Some(abs_record) = &mut abs_record else {
                         continue;
                     };
                     abs_record.all = abs_record.all.union(joined).copied().collect();

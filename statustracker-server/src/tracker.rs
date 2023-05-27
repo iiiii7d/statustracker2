@@ -62,7 +62,7 @@ impl StatusTracker {
             database,
         })
     }
-    pub async fn get_hours(&self, from: HourTimestamp, to: HourTimestamp,) -> Result<Vec<Hour>> {
+    pub async fn get_hours(&self, from: HourTimestamp, to: HourTimestamp) -> Result<Vec<Hour>> {
         let a = self
             .database
             .collection::<Hour>("hours")
@@ -76,10 +76,9 @@ impl StatusTracker {
                 None,
             )
             .await?
-            .collect::<Vec<_>>().await;
-        let a = a
-            .into_iter()
-            .collect::<mongodb::error::Result<Vec<_>>>()?;
+            .collect::<Vec<_>>()
+            .await;
+        let a = a.into_iter().collect::<mongodb::error::Result<Vec<_>>>()?;
         Ok(a)
     }
     pub async fn get_hour(&self, timestamp: HourTimestamp) -> Result<Option<Hour>> {

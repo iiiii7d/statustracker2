@@ -165,7 +165,8 @@ async fn main() -> Result<()> {
     } else {
         PathBuf::from("./statustracker.toml")
     };
-    let file = std::fs::read_to_string(&path).map_err(|e| eyre!("Error opening {}: {e}", path.display()))?;
+    let file = std::fs::read_to_string(&path)
+        .map_err(|e| eyre!("Error opening {}: {e}", path.display()))?;
 
     server::start_server(StatusTracker::new(toml::from_str(&file)?).await?).await?;
     Ok(())

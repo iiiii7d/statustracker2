@@ -7,7 +7,8 @@ pub type HourTimestamp = u32;
 pub type MinuteTimestamp = u64;
 pub type Category = SmolStr;
 
-#[must_use] pub fn get_hour_timestamp(t: SystemTime) -> HourTimestamp {
+#[must_use]
+pub fn get_hour_timestamp(t: SystemTime) -> HourTimestamp {
     (t.duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs() / 60 / 60) as HourTimestamp
 }
 
@@ -21,7 +22,8 @@ impl BitField64 {
             self.1 |= 1 << (i - 30);
         }
     }
-    #[must_use] pub const fn is_on(self, i: i32) -> bool {
+    #[must_use]
+    pub const fn is_on(self, i: i32) -> bool {
         if i < 30 {
             self.0 & (1 << i) != 0
         } else {

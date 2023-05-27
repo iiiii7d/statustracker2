@@ -1,6 +1,5 @@
 use std::{sync::Arc, time::Duration};
 
-
 use color_eyre::eyre::Result;
 use mongodb::bson::doc;
 use rocket::{
@@ -58,7 +57,11 @@ async fn range(
     from: HourTimestamp,
     to: HourTimestamp,
 ) -> Result<CustomMsgPack<Vec<Hour>>, String> {
-    let a = tracker.read().await.get_hours(from, to).await
+    let a = tracker
+        .read()
+        .await
+        .get_hours(from, to)
+        .await
         .map_err(|a| format!("Error reading from database: {a}"))?;
     Ok(CustomMsgPack(a))
 }
