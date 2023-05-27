@@ -60,7 +60,7 @@ async fn range(
     from: MinuteTimestamp,
     to: MinuteTimestamp,
     range: u64,
-) -> Result<CustomMsgPack<Vec<RollingAvgRecord>>, String> {
+) -> Result<CustomMsgPack<Vec<Option<RollingAvgRecord>>>, String> {
     let a = tracker
         .read()
         .await

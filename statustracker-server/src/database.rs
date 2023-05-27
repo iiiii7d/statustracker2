@@ -91,9 +91,15 @@ impl STDatabase {
     ) -> Result<Vec<Option<Arc<AbsRecord>>>> {
         let from_h = (from / 60) as u32;
         let to_h = (to / 60) as u32;
-        let hours = self.get_hours(from_h, to_h).await?;
+        let mut hours = self.get_hours(from_h, to_h).await?;
+        for i in from_h..=to_h {
+            if !hours.iter().any(|a| a._id == i) {
+                hours.push(Hour::new(i));
+            }
+        }
         let records = hours
             .iter()
+            .sorted_by_cached_key(|a| a._id)
             .flat_map(|h| &h.records)
             .skip((from - from_h as u64 * 60) as usize)
             .take((to - from + 1) as usize)
@@ -106,19 +112,25 @@ impl STDatabase {
         from: MinuteTimestamp,
         to: MinuteTimestamp,
         delta: u64,
-    ) -> Result<Vec<RollingAvgRecord>> {
+    ) -> Result<Vec<Option<RollingAvgRecord>>> {
         let mins = self.get_minutes(from - delta, to + delta).await?;
         let udelta = delta as usize;
         Ok((udelta..mins.len() - udelta)
             .into_par_iter()
             .map(|i| {
-                mins[i - udelta..i + udelta]
+                mins[i - udelta..=i + udelta]
                     .iter()
                     .filter_map(Option::as_ref)
                     .map(|a| (**a).to_owned())
                     .collect::<Vec<_>>()
             })
-            .map(|a| (*a).into())
+            .map(|a| {
+                if a.is_empty() {
+                    None
+                } else {
+                    Some((*a).into())
+                }
+            })
             .collect())
     }
     #[tracing::instrument(skip(self))]
