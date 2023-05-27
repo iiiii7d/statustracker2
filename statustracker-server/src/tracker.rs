@@ -1,6 +1,7 @@
 use std::{collections::HashMap, time::SystemTime};
 
 use color_eyre::eyre::{eyre, Result};
+use futures::StreamExt;
 use itertools::Itertools;
 use mongodb::{
     bson::{doc, to_bson},
@@ -60,6 +61,26 @@ impl StatusTracker {
             name_map,
             database,
         })
+    }
+    pub async fn get_hours(&self, from: HourTimestamp, to: HourTimestamp,) -> Result<Vec<Hour>> {
+        let a = self
+            .database
+            .collection::<Hour>("hours")
+            .find(
+                doc! {
+                    "_id": {
+                        "$gte": from,
+                        "$lte": to
+                    }
+                },
+                None,
+            )
+            .await?
+            .collect::<Vec<_>>().await;
+        let a = a
+            .into_iter()
+            .collect::<mongodb::error::Result<Vec<_>>>()?;
+        Ok(a)
     }
     pub async fn get_hour(&self, timestamp: HourTimestamp) -> Result<Option<Hour>> {
         Ok(self

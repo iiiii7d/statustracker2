@@ -1,4 +1,5 @@
 use std::{sync::Arc, time::Duration};
+use std::collections::HashMap;
 
 use color_eyre::eyre::Result;
 use futures::stream::StreamExt;
@@ -57,28 +58,8 @@ async fn range(
     from: HourTimestamp,
     to: HourTimestamp,
 ) -> Result<CustomMsgPack<Vec<Hour>>, String> {
-    let a = tracker
-        .read()
-        .await
-        .database
-        .collection::<Hour>("hours")
-        .find(
-            doc! {
-                "_id": {
-                    "$gte": from,
-                    "$lte": to
-                }
-            },
-            None,
-        )
-        .await
-        .map_err(|a| format!("Error while querying database: {a}"))?
-        .collect::<Vec<_>>()
-        .await;
-    let a = a
-        .into_iter()
-        .collect::<mongodb::error::Result<Vec<_>>>()
-        .map_err(|a| format!("Error while querying database: {a}"))?;
+    let a = tracker.read().await.get_hours(from, to).await
+        .map_err(|a| format!("Error reading from database: {a}"))?;
     Ok(CustomMsgPack(a))
 }
 
