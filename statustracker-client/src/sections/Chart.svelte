@@ -5,12 +5,13 @@
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
   import { data, lineColors, playerActiveTimes, type RollingAverage, rollingAverages } from "../stores";
+  import type { Category } from '../retrieve-data';
 
   Chart.register(...registerables, annotationPlugin);
 
   const alpha = "fc9630";
 
-  function generateLine(cat: string, y: number[], i: number, j: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
+  function generateLine(cat: Category, y: number[], i: number, j: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
     return {
       tension: .25,
       label: `${cat}${ra !== 0 ? ` (Rolling average ${rollingAverages[ra]})` : ""}`,

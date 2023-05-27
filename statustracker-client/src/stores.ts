@@ -1,9 +1,10 @@
 import type moment from "moment";
 import { writable } from "svelte/store";
+import type { Category } from "./retrieve-data";
 
 export const data = writable<{
   x: moment.Moment[];
-  y: Map<RollingAverage, Map<string, number[]>>;
+  y: Map<RollingAverage, Map<Category, number[]>>;
 }>({
   x: [],
   y: new Map(),

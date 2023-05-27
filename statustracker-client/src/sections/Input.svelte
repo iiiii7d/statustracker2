@@ -18,7 +18,7 @@
     $data = await getLines(
       from !== "" ? Math.floor(moment(from).unix()/60) : 0,
       to !== "" ? Math.floor(moment(to).unix()/60) : 4294967295,
-      player,
+      //player,
       Object.entries($rollingAverageSwitches).filter(([_, v]) => v)
       .map(([k, _]) => parseInt(k) as RollingAverage).sort()
     )

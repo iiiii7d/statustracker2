@@ -5,10 +5,11 @@ import { type RollingAverage } from "./stores";
 
 export interface RollingAvgRecord {
   all: number;
-  categories: Record<string, number>;
+  categories: Record<Category, number>;
 }
 
-type MinuteTimestamp = number;
+export type MinuteTimestamp = number;
+export type Category = string;
 
 const urlSearchParams = new URLSearchParams(window.location.search);
 export const server = decodeURIComponent(urlSearchParams.get("server") ?? "");
@@ -40,16 +41,15 @@ export async function getPlayerUuid(player: string): Promise<string | null> {
 export async function getLines(
   from = 0,
   to = 4294967295,
-  player = "",
   rollingAverages: RollingAverage[] = [0],
 ): Promise<{
   x: moment.Moment[];
-  y: Map<RollingAverage, Map<string, number[]>>;
+  y: Map<RollingAverage, Map<Category, number[]>>;
 }> {
   const p = await Promise.all(
     rollingAverages.map((ra) => getLine(from, to, ra)),
   );
-  const y = new Map<RollingAverage, Map<string, number[]>>();
+  const y = new Map<RollingAverage, Map<Category, number[]>>();
   for (const [i, r] of p.entries()) {
     if (r === undefined) continue;
     if (!y.has(rollingAverages[i])) y.set(rollingAverages[i], new Map());
