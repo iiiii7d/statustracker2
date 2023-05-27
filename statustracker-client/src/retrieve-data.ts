@@ -1,34 +1,21 @@
 import { decode } from "@msgpack/msgpack";
 import axios from "axios";
 import moment from "moment";
-import { data, playerActiveTimes } from "./stores";
+import { type RollingAverage } from "./stores";
 
-type HourTimestamp = number;
-type MinuteTimestamp = number;
+export interface RollingAvgRecord {
+  all: number;
+  categories: Record<Category, number>;
+}
 
-export type Record =
-  | {
-      all: number[];
-      categories: { [key: string]: number[] };
-    }
-  | {
-      joined: number[];
-      joined_categories: { [key: string]: number[] };
-      left: number[];
-      left_categories: { [key: string]: number[] };
-    };
-
-export type Hour = {
-  _id: HourTimestamp;
-  tracked_mins: [number, number];
-  deltas: { [key: string]: Record };
-};
+export type MinuteTimestamp = number;
+export type Category = string;
 
 const urlSearchParams = new URLSearchParams(window.location.search);
 export const server = decodeURIComponent(urlSearchParams.get("server") ?? "");
 
 async function getMsgPack<T>(url: string): Promise<T | undefined> {
-  let res = await axios
+  const res = await axios
     .get<ArrayLike<number>>(url, { responseType: "arraybuffer" })
     .catch(console.error);
   if (!res) return undefined;
@@ -39,149 +26,64 @@ export async function getNameMap(): Promise<string[] | undefined> {
   return (await getMsgPack(`${server}/name_map`)) ?? undefined;
 }
 
-export async function getAllBetween(
-  f: HourTimestamp,
+export async function getLine(
+  f: MinuteTimestamp,
   t: MinuteTimestamp,
-): Promise<Hour[] | undefined> {
-  return await getMsgPack(`${server}/?from=${f}&to=${t}`);
+  range: RollingAverage = 0,
+): Promise<(RollingAvgRecord | null)[] | undefined> {
+  return await getMsgPack(`${server}/?from=${f}&to=${t}&range=${range / 2}`);
 }
 
 export async function getPlayerUuid(player: string): Promise<string | null> {
   return (await getMsgPack(`${server}/uuid/${player}`)) ?? null;
 }
 
-export async function retrievePlayerCounts(
-  from: number = 0,
-  to: number = 4294967295,
-  player: string = "",
-) {
-  let x: moment.Moment[] = [];
-  let y: Map<string, number[]> = new Map();
-  let count = 0;
-  let push = (k: string, n: number) => {
-    if (!y.has(k)) {
-      y.set(
-        k,
-        Array.from(Array(count).keys()).map((i) => {
-          return isNaN(y.get("all")?.at(i) ?? NaN) ? NaN : 0;
-        }),
-      );
-    }
-    y.get(k)?.push(n);
-  };
-  let current: Map<string, number> = new Map();
-
-  let hours: Hour[] | undefined = await getAllBetween(from, to);
-  if (hours === undefined) {
-    console.error("Error querying database for hours");
-    return;
-  }
-  for (
-    let t = Math.min(...hours.map((h) => h._id));
-    t <= Math.max(...hours.map((h) => h._id));
-    t++
-  ) {
-    let h: Hour | undefined = hours.find((h) => h._id === t);
-    for (let m = 0; m < 60; m++) {
-      x.push(moment.unix(t * 3600 + m * 60).utc());
-      if (
-        h === undefined ||
-        (m < 30
-          ? h.tracked_mins[0] & (1 << m)
-          : h.tracked_mins[1] & (1 << (m - 30))) === 0
-      ) {
-        for (let cat of current.keys()) {
-          push(cat, NaN);
-        }
-      } else {
-        let record: Record | undefined = h.deltas[m.toString()];
-        if (record === undefined) {
-        } else if ("all" in record) {
-          for (let cat of current.keys()) {
-            current.set(cat, 0);
-          }
-          current.set("all", record.all.length);
-          for (let [cat, list] of Object.entries(record.categories)) {
-            current.set(cat, list.length);
-          }
-        } else {
-          current.set(
-            "all",
-            (current.get("all") ?? 0) +
-              record.joined.length -
-              record.left.length,
-          );
-          for (let [cat, list] of Object.entries(record.joined_categories)) {
-            current.set(cat, (current.get(cat) ?? 0) + list.length);
-          }
-          for (let [cat, list] of Object.entries(record.left_categories)) {
-            current.set(cat, (current.get(cat) ?? 0) - list.length);
-          }
-        }
-        for (let [cat, n] of current.entries()) {
-          push(cat, n);
-        }
-      }
-      count++;
-    }
-  }
-  data.set({ x, y });
-
-  if (player) {
-    await retrievePlayerData(hours, player);
-  }
+export async function getPlayerJoinTimes(
+  from: number,
+  to: number,
+  player: string,
+): Promise<[moment.Moment, moment.Moment][]> {
+  const a =
+    (await getMsgPack<[MinuteTimestamp, MinuteTimestamp][]>(
+      `${server}/player/${player}?from=${from}&to=${to}`,
+    )) ?? [];
+  return a.map(([a, b]) => [moment.unix(a * 60), moment.unix(b * 60)]);
 }
 
-export async function retrievePlayerData(hours: Hour[], player: string) {
-  let uuid = await getPlayerUuid(player);
-  if (uuid === null) {
-    console.error("No UUID found");
-    playerActiveTimes.set([]);
-    return;
-  }
-  let index = (await getNameMap())?.indexOf(uuid) ?? -1;
-  let times: [moment.Moment, moment.Moment][] = [];
-  let start: moment.Moment | null = null;
+export async function getLines(
+  from: number,
+  to: number,
+  rollingAverages: RollingAverage[] = [0],
+): Promise<{
+  x: moment.Moment[];
+  y: Map<RollingAverage, Map<Category, number[]>>;
+}> {
+  const p = await Promise.all(
+    rollingAverages.map((ra) => getLine(from, to, ra)),
+  );
+  const y = new Map<RollingAverage, Map<Category, number[]>>();
+  for (const [i, r] of p.entries()) {
+    if (r === undefined) continue;
+    if (!y.has(rollingAverages[i])) y.set(rollingAverages[i], new Map());
+    const m = y.get(rollingAverages[i])!;
 
-  let leave = (h: number, m: number = 0) => {
-    if (start !== null) {
-      times.push([start, moment.unix(h * 3600 + m * 60).utc()]);
-      start = null;
+    m.set(
+      "all",
+      r.map((s) => s?.all ?? NaN),
+    );
+    const categories = new Set(
+      r.flatMap((s) => Object.keys(s?.categories ?? {})),
+    );
+    for (const cat of categories) {
+      m.set(
+        cat,
+        r.map((s) => s?.categories[cat] ?? NaN),
+      );
     }
-  };
-  let join = (h: number, m: number = 0) => {
-    if (start === null) start = moment.unix(h * 3600 + m * 60).utc();
-  };
-
-  for (
-    let t = Math.min(...hours.map((h) => h._id));
-    t <= Math.max(...hours.map((h) => h._id));
-    t++
-  ) {
-    let h: Hour | undefined = hours.find((h) => h._id === t);
-    if (h === undefined) {
-      leave(t);
-    } else
-      for (let m = 0; m < 60; m++) {
-        if (
-          (m < 30
-            ? h.tracked_mins[0] & (1 << m)
-            : h.tracked_mins[1] & (1 << (m - 30))) === 0
-        ) {
-          leave(t, m);
-        } else {
-          let record: Record | undefined = h.deltas[m.toString()];
-          if (record === undefined) {
-          } else if ("all" in record) {
-            if (record.all.includes(index)) join(t, m);
-          } else if (record.joined.includes(index)) {
-            join(t, m);
-          } else if (record.left.includes(index)) {
-            leave(t, m);
-          }
-        }
-      }
   }
-  leave(4294967295);
-  playerActiveTimes.set(times);
+  const x = [];
+  for (let i = from; i <= to; i++) {
+    x.push(moment.unix(i * 60));
+  }
+  return { x, y };
 }

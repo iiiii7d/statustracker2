@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { Category } from "../retrieve-data";
   import { data, lineColors } from "../stores";
-  let percentages: [string, number][];
-  $: allCount = $data.y.get("all")?.filter(v => !isNaN(v)).length ?? 0;
-  $: percentages = Array.from($data.y.entries()).map(([k, d]) => {
+  let percentages: [Category, number][];
+  $: allCount = $data.y.get(0)?.get("all")?.filter(v => !isNaN(v)).length ?? 0;
+  $: percentages = Array.from($data.y.get(0)?.entries() ?? []).map(([k, d]) => {
     return [
       k,
       Math.round(d.filter(v => !isNaN(v) && v !== 0).length / allCount * 100 * 100) / 100

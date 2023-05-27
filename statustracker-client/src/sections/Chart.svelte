@@ -1,78 +1,63 @@
 <script lang="ts">
-  import { Chart, registerables } from 'chart.js';
+  import { Chart, registerables, type ChartData, type CoreChartOptions, type DatasetChartOptions, type ElementChartOptions, type LineControllerChartOptions, type PluginChartOptions, type Point, type ScaleChartOptions, type ChartDataset } from 'chart.js';
+  import type { _DeepPartialObject } from 'chart.js/dist/types/utils';
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, lineColors, playerActiveTimes, rollingAverages } from "../stores";
+  import { data, lineColors, playerActiveTimes, type RollingAverage, rollingAverages } from "../stores";
+  import type { Category } from '../retrieve-data';
 
   Chart.register(...registerables, annotationPlugin);
 
-  let cache = new Map<[number[], number], number[]>();
-  function getRollingAverage(d: number[], span: number): number[] {
-    let res = cache.get([d, span]);
-    if (res !== undefined) return res
-    res = d.map((datum, i) => {
-      if (isNaN(datum)) return NaN;
-      let slice = d.slice(Math.max(i - span, 0), Math.min(i + span + 1, d.length))
-      .filter(a => !isNaN(a));
-      return slice.reduce((acc: number, dat: number) => acc + dat, 0) / slice.length
-    })
-    cache.set([d, span], res)
-    return res
-  }
+  const alpha = "f84210";
 
-  function generateLine(k: string, d: number[], i: number, color: string, avgSpan?: [number, string]): any {
+  function generateLine(cat: Category, y: number[], i: number, j: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
     return {
       tension: .25,
-      label: `${k}${avgSpan ? ` (Rolling average ${avgSpan[1]})` : ""}`,
-      data: avgSpan ? getRollingAverage(d, avgSpan[0]) : d,
-      borderColor: lineColors[i % lineColors.length] + color,
+      label: `${cat}${ra !== 0 ? ` (Rolling average ${rollingAverages[ra]})` : ""}`,
+      data: y,
+      borderColor: lineColors[j % lineColors.length] + alpha[i],
       pointRadius: 0,
       pointHitRadius: 5,
-      spanGaps: true
+      spanGaps: false
     }
   }
 
-  let chartData: any;
   $: chartData = {
     labels: $data.x,
-    datasets: Array.from($data.y.entries()).flatMap(([k, d], i) => {
-      let lines = [];
-      const hex = "f8421";
-      if ($rollingAverages[10080]) lines.push(generateLine(k, d, i, hex[lines.length], [5040, "7d"]))
-      if ($rollingAverages[1440]) lines.push(generateLine(k, d, i, hex[lines.length], [720, "24h"]))
-      if ($rollingAverages[720]) lines.push(generateLine(k, d, i, hex[lines.length], [360, "12h"]))
-      if ($rollingAverages[60]) lines.push(generateLine(k, d, i, hex[lines.length], [30, "1h"]))
-      if ($rollingAverages[0]) lines.push(generateLine(k, d, i, hex[lines.length]));
-      return lines;
-    })
-  }
-  let options: any;
+    datasets: Array.from($data.y.entries()).flatMap(([ra, m], i) => {
+      return Array.from(m.entries()).map(([cat, y], j) => {
+        return generateLine(cat, y, $data.y.size - 1 - i, j, ra)
+      })
+    }),
+  } as ChartData<"line", (number | Point)[], moment.Moment>;
   $: options = {
+    animation: false,
     plugins: {
       annotation: {
         common: {
           drawTime: 'beforeDraw'
         },
         annotations: $playerActiveTimes.map(([from, to]) => {
+          console.log(from, to);
           return {
             type: 'box',
             backgroundColor: '#333',
             borderWidth: 0,
-            xMin: from,
-            xMax: to,
+            xMin: from as unknown as number, // prevent ts from erroring
+            xMax: to as unknown as number, // prevent ts from erroring
             label: {
               drawTime: 'afterDatasetsDraw',
               display: false,
               content: `${from.local().format("HH:mm")} → ${to.local().format("HH:mm")}`,
               color: "#fc0",
             },
-            enter({element}: any) {
-              element.label.options.display = true;
+            enter({element}) {
+              if (element.label) element.label.options.display = true;
               return true;
             },
-            leave({element}: any) {
-              element.label.options.display = false;
+            leave({element}) {
+              if (element.label) element.label.options.display = false;
               return true;
             }
           }
@@ -86,7 +71,7 @@
           color: ["#555"]
         },
         time: {
-          unit: "minute", 
+          // unit: "minute",
         }
       },
       y: {
@@ -96,7 +81,7 @@
         min: 0,
       },
     }
-  };
+  } as _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
 </script>
 <Line
   data={chartData} {options}

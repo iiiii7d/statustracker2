@@ -1,11 +1,60 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+use serde_big_array::BigArray;
 use smol_str::SmolStr;
-use tracing::{debug, trace};
 
-use crate::utils::{BitField64, Category, HourTimestamp, MinuteTimestamp};
+use crate::utils::{BitField64, Category, HourTimestamp};
+
+#[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq)]
+pub struct RollingAvgRecord {
+    pub all: f32,
+    pub categories: HashMap<Category, f32>,
+}
+impl From<AbsRecord> for RollingAvgRecord {
+    fn from(value: AbsRecord) -> Self {
+        Self {
+            all: value.all.len() as f32,
+            categories: value
+                .categories
+                .into_iter()
+                .map(|(a, b)| (a, b.len() as f32))
+                .collect(),
+        }
+    }
+}
+impl From<&[AbsRecord]> for RollingAvgRecord {
+    fn from(value: &[AbsRecord]) -> Self {
+        Self {
+            all: value.iter().map(|a| a.all.len() as f32).sum::<f32>() / value.len() as f32,
+            categories: {
+                let mut counts: HashMap<Category, Vec<f32>> = HashMap::new();
+                for a in value {
+                    for (cat, s) in &a.categories {
+                        counts
+                            .entry(cat.to_owned())
+                            .or_default()
+                            .push(s.len() as f32);
+                    }
+                }
+                let max = counts.values().map(Vec::len).max();
+                if let Some(max) = max {
+                    for l in counts.values_mut() {
+                        l.extend(vec![0.0; max - l.len()]);
+                    }
+                }
+                counts
+                    .into_iter()
+                    .map(|(cat, l)| (cat, l.iter().sum::<f32>() / l.len() as f32))
+                    .collect()
+            },
+        }
+    }
+}
 
 #[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq, Eq)]
 pub struct AbsRecord {
@@ -27,150 +76,300 @@ pub enum Record {
 
 impl Default for Record {
     fn default() -> Self {
-        Self::Abs(Default::default())
+        Self::Abs(AbsRecord::default())
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
 pub struct Hour {
     pub _id: HourTimestamp,
-    pub tracked_mins: BitField64,
-    pub deltas: HashMap<SmolStr, Record>,
+    #[serde(with = "BigArray")]
+    pub records: [Option<Arc<AbsRecord>>; 60],
 }
 impl Hour {
-    pub fn new(timestamp: MinuteTimestamp, abs: AbsRecord) -> Self {
-        let min = timestamp - timestamp / 60 * 60;
+    #[must_use]
+    pub fn new(timestamp: HourTimestamp) -> Self {
         Self {
-            _id: (timestamp / 60) as u32,
-            tracked_mins: {
-                let mut bits = BitField64::default();
-                bits.turn_on(min as i32);
-                bits
-            },
-            deltas: HashMap::from([(min.to_string().into(), Record::Abs(abs))]),
+            _id: timestamp,
+            ..Self::default()
         }
     }
-    #[tracing::instrument(skip(self))]
-    pub fn calculate_abs_record(&self, minute_no: u8) -> Option<AbsRecord> {
-        let mut abs_record = None;
-        for (m, record) in self
-            .deltas
-            .iter()
-            .sorted_by_key(|(k, _)| k.parse::<u8>().unwrap())
-        {
-            let m = m.parse::<u8>().unwrap();
-            debug!(m, "Calculating absolute time record");
-            if m > minute_no {
-                break;
+}
+impl Default for Hour {
+    fn default() -> Self {
+        Self {
+            _id: HourTimestamp::default(),
+            records: [(); 60].map(|_| None),
+        }
+    }
+}
+impl From<HourDef> for Hour {
+    #[allow(clippy::unwrap_in_result)]
+    #[tracing::instrument]
+    fn from(value: HourDef) -> Self {
+        let mut hour = Self::new(value._id);
+        let prev_record: fn(usize, &Self) -> Option<Arc<AbsRecord>> = |m, h| {
+            if m == 0 {
+                None
+            } else {
+                h.records[m - 1].to_owned()
             }
-            match record {
-                Record::Abs(record) => {
-                    abs_record = Some(record.to_owned());
-                }
-                Record::Delta {
+        };
+        for m in 0usize..=59 {
+            let record = value.deltas.get(&*m.to_string());
+            if !value.tracked_mins.is_on(m.try_into().unwrap()) {
+                continue;
+            }
+            hour.records[m] = match record {
+                Some(Record::Abs(record)) => Some(Arc::new(record.to_owned())),
+                Some(Record::Delta {
                     joined,
                     joined_categories,
                     left,
                     left_categories,
-                } => {
-                    let abs_record = if let Some(abs_record) = &mut abs_record {
-                        abs_record
-                    } else {
-                        continue;
+                }) => {
+                    let Some(prev) = prev_record(m, &hour) else {
+                        panic!("No abs record to compare to")
                     };
-                    abs_record.all = abs_record.all.union(joined).cloned().collect();
-                    abs_record.all = abs_record.all.difference(left).cloned().collect();
+                    let mut prev = (*prev).to_owned();
+                    prev.all = prev.all.union(joined).copied().collect();
+                    prev.all = prev.all.difference(left).copied().collect();
                     for (cat, other_list) in joined_categories {
-                        let list = abs_record.categories.entry(cat.to_owned()).or_default();
-                        *list = list.union(other_list).cloned().collect();
+                        let list = prev.categories.entry(cat.to_owned()).or_default();
+                        *list = list.union(other_list).copied().collect();
                     }
                     for (cat, other_list) in left_categories {
-                        let list = abs_record.categories.entry(cat.to_owned()).or_default();
-                        *list = list.difference(other_list).cloned().collect();
+                        let list = prev.categories.entry(cat.to_owned()).or_default();
+                        *list = list.difference(other_list).copied().collect();
                     }
+                    Some(Arc::new(prev))
                 }
+                None => prev_record(m, &hour).map(|prev| Arc::clone(&prev)),
             }
         }
-        trace!(?abs_record);
-        abs_record
+        hour
     }
+}
 
-    #[tracing::instrument(skip(self, abs))]
-    pub fn add_record(&mut self, timestamp: MinuteTimestamp, abs: AbsRecord) {
-        let minute_no = (timestamp - self._id as u64 * 60) as u8;
-        if minute_no >= 60 {
-            panic!("{minute_no}");
-        }
-        self.tracked_mins.turn_on(minute_no as i32);
-
-        if minute_no == 0 || !self.tracked_mins.is_on(minute_no as i32 - 1) {
-            debug!(minute_no, "Adding Abs record");
-            self.deltas
-                .insert(minute_no.to_string().into(), Record::Abs(abs));
-            return;
-        }
-
-        let latest_abs = self.calculate_abs_record(minute_no).unwrap_or_default();
-        trace!(?latest_abs);
-
-        if latest_abs == abs {
-            debug!("No change, nothing to add");
-            return;
-        }
-        debug!(minute_no, "Adding Delta record");
-
+#[derive(Deserialize, Serialize, Debug, Clone, Default, PartialEq, Eq)]
+pub struct HourDef {
+    pub _id: HourTimestamp,
+    pub tracked_mins: BitField64,
+    pub deltas: HashMap<SmolStr, Record>,
+}
+impl From<Hour> for HourDef {
+    fn from(value: Hour) -> Self {
+        let mut hour = Self {
+            _id: value._id,
+            ..Self::default()
+        };
         let empty_hash_set = &HashSet::new();
+        let mut prev_record: Option<Arc<AbsRecord>> = None;
 
-        let delta = Record::Delta {
-            joined: abs.all.difference(&latest_abs.all).cloned().collect(),
-            joined_categories: {
-                let mut joined = HashMap::new();
-                for cat in abs
-                    .categories
-                    .keys()
-                    .chain(latest_abs.categories.keys())
-                    .sorted()
-                    .dedup()
-                {
-                    let joined_cat = abs
-                        .categories
-                        .get(cat)
-                        .unwrap_or(empty_hash_set)
-                        .difference(latest_abs.categories.get(cat).unwrap_or(empty_hash_set))
-                        .cloned()
-                        .collect::<HashSet<_>>();
-                    if !joined_cat.is_empty() {
-                        joined.insert(cat.to_owned(), joined_cat);
-                    }
-                }
-                joined
+        for (i, record) in value.records.into_iter().enumerate() {
+            let Some(record) = record else {
+                prev_record = None;
+                continue
+            };
+
+            hour.tracked_mins.turn_on(i.try_into().unwrap());
+
+            if i == 0 || prev_record.is_none() {
+                hour.deltas
+                    .insert(i.to_string().into(), Record::Abs((*record).to_owned()));
+            } else if let Some(prev) = prev_record {
+                let delta = Record::Delta {
+                    joined: record.all.difference(&prev.all).copied().collect(),
+                    joined_categories: {
+                        let mut joined = HashMap::new();
+                        for cat in record
+                            .categories
+                            .keys()
+                            .chain(prev.categories.keys())
+                            .sorted()
+                            .dedup()
+                        {
+                            let joined_cat = record
+                                .categories
+                                .get(cat)
+                                .unwrap_or(empty_hash_set)
+                                .difference(prev.categories.get(cat).unwrap_or(empty_hash_set))
+                                .copied()
+                                .collect::<HashSet<_>>();
+                            if !joined_cat.is_empty() {
+                                joined.insert(cat.to_owned(), joined_cat);
+                            }
+                        }
+                        joined
+                    },
+                    left: prev.all.difference(&record.all).copied().collect(),
+                    left_categories: {
+                        let mut left = HashMap::new();
+                        for cat in record
+                            .categories
+                            .keys()
+                            .chain(prev.categories.keys())
+                            .sorted()
+                            .dedup()
+                        {
+                            let left_cat = prev
+                                .categories
+                                .get(cat)
+                                .unwrap_or(empty_hash_set)
+                                .difference(record.categories.get(cat).unwrap_or(empty_hash_set))
+                                .copied()
+                                .collect::<HashSet<_>>();
+                            if !left_cat.is_empty() {
+                                left.insert(cat.to_owned(), left_cat);
+                            }
+                        }
+                        left
+                    },
+                };
+                hour.deltas.insert(i.to_string().into(), delta);
+            }
+            prev_record = Some(Arc::clone(&record));
+        }
+        hour
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        collections::{HashMap, HashSet},
+        sync::Arc,
+    };
+
+    use crate::{
+        hour::{AbsRecord, Hour, HourDef, Record},
+        utils::BitField64,
+    };
+
+    #[test]
+    pub fn hour_def_to_hour() {
+        let hd = HourDef {
+            _id: 0,
+            tracked_mins: {
+                let mut b = BitField64::default();
+                b.turn_on(0);
+                b.turn_on(1);
+                b.turn_on(3);
+                b
             },
-            left: latest_abs.all.difference(&abs.all).cloned().collect(),
-            left_categories: {
-                let mut left = HashMap::new();
-                for cat in abs
-                    .categories
-                    .keys()
-                    .chain(latest_abs.categories.keys())
-                    .sorted()
-                    .dedup()
-                {
-                    let left_cat = latest_abs
-                        .categories
-                        .get(cat)
-                        .unwrap_or(empty_hash_set)
-                        .difference(abs.categories.get(cat).unwrap_or(empty_hash_set))
-                        .cloned()
-                        .collect::<HashSet<_>>();
-                    if !left_cat.is_empty() {
-                        left.insert(cat.to_owned(), left_cat);
-                    }
-                }
-                left
+            deltas: {
+                let mut d = HashMap::new();
+                d.insert(
+                    "0".into(),
+                    Record::Abs(AbsRecord {
+                        all: HashSet::from([0]),
+                        categories: HashMap::default(),
+                    }),
+                );
+                d.insert(
+                    "1".into(),
+                    Record::Delta {
+                        joined: HashSet::from([1]),
+                        joined_categories: HashMap::default(),
+                        left: HashSet::from([0]),
+                        left_categories: HashMap::default(),
+                    },
+                );
+                d.insert(
+                    "3".into(),
+                    Record::Abs(AbsRecord {
+                        all: HashSet::from([1, 2]),
+                        categories: HashMap::default(),
+                    }),
+                );
+                d
             },
         };
-
-        trace!(?delta);
-        self.deltas.insert(minute_no.to_string().into(), delta);
+        let d = Hour::from(hd);
+        assert_eq!(
+            d.records[0].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([0]),
+                categories: HashMap::default(),
+            })
+        );
+        assert_eq!(
+            d.records[1].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([1]),
+                categories: HashMap::default(),
+            })
+        );
+        assert_eq!(d.records[2].as_ref().map(|a| (**a).to_owned()), None);
+        assert_eq!(
+            d.records[3].as_ref().map(|a| (**a).to_owned()),
+            Some(AbsRecord {
+                all: HashSet::from([1, 2]),
+                categories: HashMap::default(),
+            })
+        );
+    }
+    #[test]
+    pub fn hour_to_hour_def() {
+        let h = Hour {
+            _id: 0,
+            records: {
+                let mut r = [(); 60].map(|_| None);
+                r[0] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([0]),
+                    categories: HashMap::default(),
+                }));
+                r[1] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([1]),
+                    categories: HashMap::default(),
+                }));
+                r[3] = Some(Arc::new(AbsRecord {
+                    all: HashSet::from([1, 2]),
+                    categories: HashMap::default(),
+                }));
+                r
+            },
+        };
+        let hd = HourDef::from(h);
+        assert_eq!(
+            hd,
+            HourDef {
+                _id: 0,
+                tracked_mins: {
+                    let mut b = BitField64::default();
+                    b.turn_on(0);
+                    b.turn_on(1);
+                    b.turn_on(3);
+                    b
+                },
+                deltas: {
+                    let mut d = HashMap::new();
+                    d.insert(
+                        "0".into(),
+                        Record::Abs(AbsRecord {
+                            all: HashSet::from([0]),
+                            categories: HashMap::default(),
+                        }),
+                    );
+                    d.insert(
+                        "1".into(),
+                        Record::Delta {
+                            joined: HashSet::from([1]),
+                            joined_categories: HashMap::default(),
+                            left: HashSet::from([0]),
+                            left_categories: HashMap::default(),
+                        },
+                    );
+                    d.insert(
+                        "3".into(),
+                        Record::Abs(AbsRecord {
+                            all: HashSet::from([1, 2]),
+                            categories: HashMap::default(),
+                        }),
+                    );
+                    d
+                },
+            }
+        );
     }
 }
