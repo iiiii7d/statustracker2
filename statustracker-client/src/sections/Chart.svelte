@@ -9,7 +9,7 @@
 
   Chart.register(...registerables, annotationPlugin);
 
-  const alpha = "fc9630";
+  const alpha = "f84210";
 
   function generateLine(cat: Category, y: number[], i: number, j: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
     return {
@@ -19,7 +19,7 @@
       borderColor: lineColors[j % lineColors.length] + alpha[i],
       pointRadius: 0,
       pointHitRadius: 5,
-      spanGaps: true
+      spanGaps: false
     }
   }
 
@@ -34,6 +34,7 @@
   }
   let options: _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
   $: options = {
+    animation: false,
     plugins: {
       annotation: {
         common: {
