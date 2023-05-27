@@ -72,7 +72,7 @@
           color: ["#555"]
         },
         time: {
-          unit: "minute", 
+          // unit: "minute",
         }
       },
       y: {

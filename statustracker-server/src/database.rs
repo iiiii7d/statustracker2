@@ -113,12 +113,14 @@ impl STDatabase {
         to: MinuteTimestamp,
         delta: u64,
     ) -> Result<Vec<Option<RollingAvgRecord>>> {
-        let mins = self.get_minutes(from - delta, to + delta).await?;
+        let mins = self
+            .get_minutes(from.saturating_sub(delta), to.saturating_add(delta))
+            .await?;
         let udelta = delta as usize;
         Ok((udelta..mins.len() - udelta)
             .into_par_iter()
             .map(|i| {
-                mins[i - udelta..=i + udelta]
+                mins[i.saturating_sub(udelta)..=i.saturating_add(udelta)]
                     .iter()
                     .filter_map(Option::as_ref)
                     .map(|a| (**a).to_owned())

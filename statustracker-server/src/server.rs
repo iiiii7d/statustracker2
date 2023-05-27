@@ -6,7 +6,7 @@ use rocket::{
     fairing::{Fairing, Info, Kind},
     http::{uri::Host, Header, Status},
     response,
-    response::{content, Redirect, Responder},
+    response::{content, status::BadRequest, Redirect, Responder},
     routes, Request, Response, State,
 };
 use serde::Serialize;
@@ -61,6 +61,9 @@ async fn range(
     to: MinuteTimestamp,
     range: u64,
 ) -> Result<CustomMsgPack<Vec<Option<RollingAvgRecord>>>, String> {
+    if to - from > 60 * 24 * 365 * 5 {
+        return Err("Duration is too long".into());
+    };
     let a = tracker
         .read()
         .await
