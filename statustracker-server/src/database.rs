@@ -9,7 +9,6 @@ use mongodb::{
     Database,
 };
 use rayon::prelude::*;
-use rocket::time::format_description::modifier::Minute;
 use tracing::info;
 
 use crate::{
@@ -175,7 +174,7 @@ impl STDatabase {
             };
             if record.all.contains(&player) {
                 if start.is_none() {
-                    start = Some(min)
+                    start = Some(min);
                 };
             } else {
                 leave(min, &mut start, &mut out);
