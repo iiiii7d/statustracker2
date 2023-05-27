@@ -109,12 +109,12 @@ impl STDatabase {
     ) -> Result<Vec<RollingAvgRecord>> {
         let mins = self.get_minutes(from - delta, to + delta).await?;
         let udelta = delta as usize;
-        Ok((0 + udelta..mins.len() - udelta)
+        Ok((udelta..mins.len() - udelta)
             .into_par_iter()
             .map(|i| {
                 mins[i - udelta..i + udelta]
-                    .into_iter()
-                    .filter_map(|a| a.as_ref())
+                    .iter()
+                    .filter_map(Option::as_ref)
                     .map(|a| (**a).to_owned())
                     .collect::<Vec<_>>()
             })

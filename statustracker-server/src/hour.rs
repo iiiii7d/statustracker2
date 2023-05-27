@@ -30,7 +30,7 @@ impl From<AbsRecord> for RollingAvgRecord {
 impl From<&[AbsRecord]> for RollingAvgRecord {
     fn from(value: &[AbsRecord]) -> Self {
         Self {
-            all: value.into_iter().map(|a| a.all.len() as f32).sum::<f32>() / value.len() as f32,
+            all: value.iter().map(|a| a.all.len() as f32).sum::<f32>() / value.len() as f32,
             categories: {
                 let mut counts: HashMap<Category, Vec<f32>> = HashMap::new();
                 for a in value {
@@ -38,13 +38,13 @@ impl From<&[AbsRecord]> for RollingAvgRecord {
                         counts
                             .entry(cat.to_owned())
                             .or_default()
-                            .push(s.len() as f32)
+                            .push(s.len() as f32);
                     }
                 }
-                let max = counts.values().map(|a| a.len()).max();
+                let max = counts.values().map(Vec::len).max();
                 if let Some(max) = max {
                     for l in counts.values_mut() {
-                        l.extend(vec![0.0; max - l.len()])
+                        l.extend(vec![0.0; max - l.len()]);
                     }
                 }
                 counts

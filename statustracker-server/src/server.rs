@@ -7,9 +7,7 @@ use rocket::{
     http::{uri::Host, Header, Status},
     response,
     response::{content, Redirect, Responder},
-    routes,
-    time::format_description::modifier::Minute,
-    Request, Response, State,
+    routes, Request, Response, State,
 };
 use serde::Serialize;
 use tokio::{sync::RwLock, time::Instant};
@@ -17,10 +15,8 @@ use tracing::{error, info};
 use uuid::Uuid;
 
 use crate::{
-    hour::{Hour, RollingAvgRecord},
-    name_to_uuid::name_to_uuid,
-    tracker::StatusTracker,
-    utils::{HourTimestamp, MinuteTimestamp},
+    hour::RollingAvgRecord, name_to_uuid::name_to_uuid, tracker::StatusTracker,
+    utils::MinuteTimestamp,
 };
 
 #[derive(Debug)]
