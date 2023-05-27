@@ -30,7 +30,7 @@
         .map(([k, _]) => parseInt(k) as RollingAverage).sort()
       )
       $playerActiveTimes = player ? await getPlayerJoinTimes(f, t, player) : []
-    } catch {}
+    } catch (e) {console.error(e)}
     loading--;
   }
   const version = __APP_VERSION__;

@@ -1,12 +1,15 @@
-use std::{sync::Arc, time::Duration};
+use std::{io::Cursor, sync::Arc, time::Duration};
 
-use color_eyre::eyre::Result;
+use color_eyre::{
+    eyre::{eyre, Result},
+    Report,
+};
 use mongodb::bson::doc;
 use rocket::{
     fairing::{Fairing, Info, Kind},
     http::{uri::Host, Header, Status},
     response,
-    response::{content, status::BadRequest, Redirect, Responder},
+    response::{content, Redirect, Responder},
     routes, Request, Response, State,
 };
 use serde::Serialize;
@@ -25,9 +28,28 @@ struct CustomMsgPack<T>(pub T);
 impl<'r, T: Serialize> Responder<'r, 'static> for CustomMsgPack<T> {
     fn respond_to(self, req: &'r Request<'_>) -> response::Result<'static> {
         #[allow(clippy::map_err_ignore)]
-        let buf = rmp_serde::to_vec_named(&self.0).map_err(|_| Status::InternalServerError)?;
+        let buf = match rmp_serde::to_vec_named(&self.0) {
+            Ok(b) => b,
+            Err(e) => return CustomError::from(Report::from(e)).respond_to(req),
+        };
 
         content::RawMsgPack(buf).respond_to(req)
+    }
+}
+#[derive(Debug)]
+struct CustomError(pub Status, pub Report);
+
+impl<'r> Responder<'r, 'static> for CustomError {
+    fn respond_to(self, _: &'r Request<'_>) -> response::Result<'static> {
+        Response::build()
+            .status(self.0)
+            .streamed_body(Cursor::new(self.1.to_string()))
+            .ok()
+    }
+}
+impl From<Report> for CustomError {
+    fn from(value: Report) -> Self {
+        Self(Status::InternalServerError, value)
     }
 }
 
@@ -60,17 +82,19 @@ async fn range(
     from: MinuteTimestamp,
     to: MinuteTimestamp,
     range: u64,
-) -> Result<CustomMsgPack<Vec<Option<RollingAvgRecord>>>, String> {
+) -> Result<CustomMsgPack<Vec<Option<RollingAvgRecord>>>, CustomError> {
     if to - from > 60 * 24 * 365 * 5 {
-        return Err("Duration is too long".into());
+        return Err(CustomError(
+            Status::BadRequest,
+            eyre!("Duration is too long"),
+        ));
     };
     let a = tracker
         .read()
         .await
         .database
         .get_rolling_avg(from, to, range)
-        .await
-        .map_err(|a| format!("Error reading from database: {a}"))?;
+        .await?;
     Ok(CustomMsgPack(a))
 }
 
@@ -80,23 +104,19 @@ async fn player(
     name: &str,
     from: MinuteTimestamp,
     to: MinuteTimestamp,
-) -> Result<CustomMsgPack<Vec<(MinuteTimestamp, MinuteTimestamp)>>, String> {
+) -> Result<CustomMsgPack<Vec<(MinuteTimestamp, MinuteTimestamp)>>, CustomError> {
     if to - from > 60 * 24 * 365 * 5 {
-        return Err("Duration is too long".into());
+        return Err(CustomError(
+            Status::BadRequest,
+            eyre!("Duration is too long"),
+        ));
     };
     let tracker = tracker.read().await;
-    let uuid = name_to_uuid(name)
-        .await
-        .map_err(|a| format!("Error while retrieving uuid: {a}"))?
-        .unwrap_or_default();
+    let uuid = name_to_uuid(name).await?.unwrap_or_default();
     let Some((i, _)) = tracker.name_map.data.iter().enumerate().find(|(_, a)| *a == uuid.as_bytes()) else {
         return Ok(CustomMsgPack(Vec::new()))
     };
-    let a = tracker
-        .database
-        .get_player_join_times(from, to, i)
-        .await
-        .map_err(|a| format!("Error reading from database: {a}"))?;
+    let a = tracker.database.get_player_join_times(from, to, i).await?;
 
     Ok(CustomMsgPack(a))
 }
@@ -114,12 +134,9 @@ async fn name_map(tracker: &State<Arc<RwLock<StatusTracker>>>) -> CustomMsgPack<
 }
 
 #[rocket::get("/uuid/<name>")]
-async fn uuid_route(name: &str) -> Result<CustomMsgPack<Option<String>>, String> {
+async fn uuid_route(name: &str) -> Result<CustomMsgPack<Option<String>>, CustomError> {
     Ok(CustomMsgPack(
-        name_to_uuid(name)
-            .await
-            .map_err(|a| format!("Error while retrieving uuid: {a}"))?
-            .map(|a| a.to_string()),
+        name_to_uuid(name).await?.map(|a| a.to_string()),
     ))
 }
 
