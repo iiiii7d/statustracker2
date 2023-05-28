@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.1 (28/5/23)
+
+- Vendor openssl
+
 ### v2.2.0 (28/5/23)
 
 - Change internals of server a lot
