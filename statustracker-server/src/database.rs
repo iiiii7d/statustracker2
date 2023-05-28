@@ -116,9 +116,14 @@ impl STDatabase {
         let mins = self
             .get_minutes(from.saturating_sub(delta), to.saturating_add(delta))
             .await?;
+        if delta == 0 {
+            return Ok(mins.into_par_iter().map(|a| a.map(|a| a.into())).collect());
+        }
         let udelta = delta as usize;
+        let step = ((to - from) / 1000 + 1) as usize;
         Ok((udelta..mins.len() - udelta)
             .into_par_iter()
+            .step_by(step)
             .map(|i| {
                 mins[i.saturating_sub(udelta)..=i.saturating_add(udelta)]
                     .iter()
@@ -128,11 +133,13 @@ impl STDatabase {
             })
             .map(|a| {
                 if a.is_empty() {
-                    None
+                    vec![None]
                 } else {
-                    Some((*a).into())
+                    vec![Some((*a).into())]
                 }
             })
+            .intersperse(vec![None; step])
+            .flatten()
             .collect())
     }
     #[tracing::instrument(skip(self))]

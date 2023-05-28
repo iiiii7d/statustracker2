@@ -19,7 +19,7 @@
       borderColor: lineColors[j % lineColors.length] + alpha[i],
       pointRadius: 0,
       pointHitRadius: 5,
-      spanGaps: false
+      spanGaps: true
     }
   }
 
