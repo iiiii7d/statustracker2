@@ -25,9 +25,11 @@
 
   $: chartData = {
     labels: $data.x,
-    datasets: Array.from($data.y.entries()).flatMap(([ra, m], i) => {
+    datasets: Array.from($data.y.entries())
+    .sort(([a, _], [b, __]) => b - a)
+    .flatMap(([ra, m], i) => {
       return Array.from(m.entries()).map(([cat, y], j) => {
-        return generateLine(cat, y, $data.y.size - 1 - i, j, ra)
+        return generateLine(cat, y, i, j, ra)
       })
     }),
   } as ChartData<"line", (number | Point)[], moment.Moment>;
