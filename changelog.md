@@ -1,5 +1,10 @@
 ## Changelog
 
+### v2.2.2 (28/5/23)
+
+- Make rolling average calculation faster by capping amount of points calculated
+- Fix category colours not being the same over several rolling averages
+
 ### v2.2.1 (28/5/23)
 
 - Vendor openssl
