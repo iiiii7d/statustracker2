@@ -155,6 +155,7 @@ async fn redirect_to_client(
 }
 
 pub async fn start_server(tracker: StatusTracker) -> Result<()> {
+    let no_write = tracker.config.no_write;
     let tracker = Arc::new(RwLock::new(tracker));
     let r = rocket::build()
         .mount(
@@ -166,18 +167,22 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
         .ignite()
         .await?;
 
-    let h = tokio::spawn(async move {
-        loop {
-            let start = Instant::now();
-            let mut tracker = tracker.write().await;
-            let _ = tracker.run().await.map_err(|e| error!("{e}"));
-            drop(tracker);
-            let time_taken = Instant::now() - start;
-            info!(?time_taken);
-            tokio::time::sleep(Duration::from_secs(60) - time_taken).await;
-        }
-    });
+    let h = if !no_write {
+        Some(tokio::spawn(async move {
+            loop {
+                let start = Instant::now();
+                let mut tracker = tracker.write().await;
+                let _ = tracker.run().await.map_err(|e| error!("{e}"));
+                drop(tracker);
+                let time_taken = Instant::now() - start;
+                info!(?time_taken);
+                tokio::time::sleep(Duration::from_secs(60) - time_taken).await;
+            }
+        }))
+    } else {
+        None
+    };
     let _ = r.launch().await?;
-    h.abort();
+    h.map(|h| h.abort());
     Ok(())
 }

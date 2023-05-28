@@ -20,6 +20,8 @@ pub struct Config {
     pub database_name: SmolStr,
     #[serde(default)]
     pub hosted_over_http: bool,
+    #[serde(default)]
+    pub no_write: bool,
 }
 
 impl Config {
