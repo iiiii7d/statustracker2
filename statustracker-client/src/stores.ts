@@ -19,6 +19,19 @@ export const lineColors = [
   "#f80",
   "#088",
 ] as const;
+export type LineColor = (typeof lineColors)[number];
+
+const catOrder: Category[] = [];
+export function lineColor(cat: Category): LineColor {
+  if (cat === "all") return lineColors[0];
+  let order;
+  if ((order = catOrder.indexOf(cat)) === -1) {
+    catOrder.push(cat);
+    order = catOrder.length - 1;
+  }
+  const l = lineColors.length - 1;
+  return lineColors[(order % l) + 1];
+}
 
 export const rollingAverages = {
   0: "Raw",

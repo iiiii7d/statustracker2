@@ -4,30 +4,32 @@
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, lineColors, playerActiveTimes, type RollingAverage, rollingAverages } from "../stores";
+  import { data, lineColors, playerActiveTimes, type RollingAverage, rollingAverages, lineColor } from "../stores";
   import type { Category } from '../retrieve-data';
 
   Chart.register(...registerables, annotationPlugin);
 
   const alpha = "f84210";
 
-  function generateLine(cat: Category, y: number[], i: number, j: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
+  function generateLine(cat: Category, y: number[], i: number, ra: RollingAverage): ChartDataset<"line", (number | Point)[]> {
     return {
       tension: .25,
       label: `${cat}${ra !== 0 ? ` (Rolling average ${rollingAverages[ra]})` : ""}`,
       data: y,
-      borderColor: lineColors[j % lineColors.length] + alpha[i],
+      borderColor: lineColor(cat) + alpha[i],
       pointRadius: 0,
       pointHitRadius: 5,
-      spanGaps: false
+      spanGaps: ra !== 0
     }
   }
 
   $: chartData = {
     labels: $data.x,
-    datasets: Array.from($data.y.entries()).flatMap(([ra, m], i) => {
-      return Array.from(m.entries()).map(([cat, y], j) => {
-        return generateLine(cat, y, $data.y.size - 1 - i, j, ra)
+    datasets: Array.from($data.y.entries())
+    .sort(([a, _], [b, __]) => b - a)
+    .flatMap(([ra, m], i) => {
+      return Array.from(m.entries()).map(([cat, y]) => {
+        return generateLine(cat, y, i, ra)
       })
     }),
   } as ChartData<"line", (number | Point)[], moment.Moment>;
