@@ -21,7 +21,7 @@
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-plugin-annotation": "^3.0.1",
     "eslint": "^8.42.0",
-    "eslint-plugin-svelte": "^2.30.0",
+    "eslint-plugin-svelte": "^2.31.0",
     "moment": "^2.29.4",
     "postcss": "^8.4.23",
     "postcss-scss": "^4.0.6",
