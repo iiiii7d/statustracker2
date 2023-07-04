@@ -12,8 +12,8 @@ devDependencies:
     specifier: ^2.4.2
     version: 2.4.2(svelte@3.59.2)(vite@4.3.9)
   '@tsconfig/svelte':
-    specifier: ^4.0.1
-    version: 4.0.1
+    specifier: ^5.0.0
+    version: 5.0.0
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.60.0
     version: 5.60.0(@typescript-eslint/parser@5.60.1)(eslint@8.43.0)(typescript@5.1.3)
@@ -421,8 +421,8 @@ packages:
       - supports-color
     dev: true
 
-  /@tsconfig/svelte@4.0.1:
-    resolution: {integrity: sha512-B+XlGpmuAQzJqDoBATNCvEPqQg0HkO7S8pM14QDI5NsmtymzRexQ1N+nX2H6RTtFbuFgaZD4I8AAi8voGg0GLg==}
+  /@tsconfig/svelte@5.0.0:
+    resolution: {integrity: sha512-iu5BqFjU0+OcLTNQp7fHe6Bf6zdNeJ9IZjLZMqWLuGzVFm/xx+lm//Tf6koPyRmxo55/Snm6RRQ990n89cRKFw==}
     dev: true
 
   /@types/json-schema@7.0.12:
