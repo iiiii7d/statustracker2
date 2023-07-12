@@ -39,8 +39,8 @@ devDependencies:
     specifier: ^8.44.0
     version: 8.44.0
   eslint-plugin-svelte:
-    specifier: ^2.32.1
-    version: 2.32.1(eslint@8.44.0)(svelte@3.59.2)
+    specifier: ^2.32.2
+    version: 2.32.2(eslint@8.44.0)(svelte@3.59.2)
   moment:
     specifier: ^2.29.4
     version: 2.29.4
@@ -883,8 +883,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-plugin-svelte@2.32.1(eslint@8.44.0)(svelte@3.59.2):
-    resolution: {integrity: sha512-8rrB4oLXf1R3DakipKRnM6AI5saXcroWwz4z+/biGdNMFvIDKsPLxrgdRRYDouNEOxyXt3X9qRRM22dhWvqKsw==}
+  /eslint-plugin-svelte@2.32.2(eslint@8.44.0)(svelte@3.59.2):
+    resolution: {integrity: sha512-Jgbop2fNZsoxxkklZAIbDNhwAPynvnCtUXLsEC6O2qax7N/pfe2cNqT0ZoBbubXKJitQQDEyVDQ1rZs4ZWcrTA==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0-0
