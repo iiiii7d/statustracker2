@@ -99,8 +99,8 @@
     clippy::semicolon_if_nothing_returned,
     clippy::semicolon_inside_block,
     clippy::separated_literal_suffix,
-    clippy::significant_drop_in_scrutinee,
-    clippy::significant_drop_tightening,
+    /* clippy::significant_drop_in_scrutinee,
+    clippy::significant_drop_tightening, */
     clippy::single_match_else,
     clippy::str_to_string,
     clippy::string_add,

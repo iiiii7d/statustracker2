@@ -173,8 +173,8 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
         .ignite()
         .await?;
 
-    let h = if !no_write {
-        Some(tokio::spawn(async move {
+    let h = (!no_write).then(|| {
+        tokio::spawn(async move {
             loop {
                 let start = Instant::now();
                 let mut tracker = tracker.write().await;
@@ -184,11 +184,12 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
                 info!(?time_taken);
                 tokio::time::sleep(Duration::from_secs(60) - time_taken).await;
             }
-        }))
-    } else {
-        None
-    };
+        })
+    });
+
     let _ = r.launch().await?;
-    h.map(|h| h.abort());
+    if let Some(h) = h {
+        h.abort()
+    }
     Ok(())
 }
