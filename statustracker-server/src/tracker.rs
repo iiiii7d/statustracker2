@@ -22,9 +22,12 @@ impl StatusTracker {
             return Err(eyre!("Category named `all` found"));
         }
         info!("Creating client");
-        let client = Client::with_options(
-            ClientOptions::parse(std::env::var(config.mongodb_uri.to_string())?).await?,
-        )?;
+        let mongodb_uri = if let Ok(mongodb_uri) = std::env::var(config.mongodb_uri.to_string()) {
+            mongodb_uri
+        } else {
+            config.mongodb_uri.to_string()
+        };
+        let client = Client::with_options(ClientOptions::parse(mongodb_uri).await?)?;
         let database = STDatabase(client.database(&config.database_name));
         info!("Retrieving name_map");
         let name_map = database

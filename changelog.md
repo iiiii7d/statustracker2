@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.3 (17/7/23)
+
+- `mongodb_uri` can now be the URI itself instead of just an environment variable
+
 ### v2.2.2 (28/5/23)
 
 - Make rolling average calculation faster by capping amount of points calculated

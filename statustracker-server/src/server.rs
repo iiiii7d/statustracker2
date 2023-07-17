@@ -113,8 +113,14 @@ async fn player(
     };
     let tracker = tracker.read().await;
     let uuid = name_to_uuid(name).await?.unwrap_or_default();
-    let Some((i, _)) = tracker.name_map.data.iter().enumerate().find(|(_, a)| *a == uuid.as_bytes()) else {
-        return Ok(CustomMsgPack(Vec::new()))
+    let Some((i, _)) = tracker
+        .name_map
+        .data
+        .iter()
+        .enumerate()
+        .find(|(_, a)| *a == uuid.as_bytes())
+    else {
+        return Ok(CustomMsgPack(Vec::new()));
     };
     let a = tracker.database.get_player_join_times(from, to, i).await?;
 
@@ -167,8 +173,8 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
         .ignite()
         .await?;
 
-    let h = if !no_write {
-        Some(tokio::spawn(async move {
+    let h = (!no_write).then(|| {
+        tokio::spawn(async move {
             loop {
                 let start = Instant::now();
                 let mut tracker = tracker.write().await;
@@ -178,11 +184,12 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
                 info!(?time_taken);
                 tokio::time::sleep(Duration::from_secs(60) - time_taken).await;
             }
-        }))
-    } else {
-        None
-    };
+        })
+    });
+
     let _ = r.launch().await?;
-    h.map(|h| h.abort());
+    if let Some(h) = h {
+        h.abort();
+    }
     Ok(())
 }

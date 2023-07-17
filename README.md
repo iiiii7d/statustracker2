@@ -16,7 +16,7 @@ Made by 7d for the Minecart Rapid Transit server
    ```toml
    # Find a JSON file hosted by dynmap that starts with "currentcount" as a key
    dynmap_link = "https://your.server/path.to.json"
-   # A name of an environment variable that contains the URI of your MongoDB cluster
+   # A name of an environment variable that contains the URI of your MongoDB cluster, or the URI itself
    mongodb_uri = "MONGO"
    # Statustracker 2 uses only one database in your cluster
    database_name = "server"
@@ -32,3 +32,9 @@ Made by 7d for the Minecart Rapid Transit server
 4. Run `statustracker-server <config_file_name>`
 5. The server uses Rocket, additional configuration for the server framework itself goes in [Rocket.toml](https://rocket.rs/v0.4/guide/configuration/#rockettoml) (if in production, you may need to set `address = "0.0.0.0"`)
 6. Enter the URL of the site that the server is hosted on, and it should redirect to the client for StatusTracker 2
+
+## Usage (Docker)
+
+1. Follow **Step 1** above
+2. TODO
+3.
