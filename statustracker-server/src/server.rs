@@ -189,7 +189,7 @@ pub async fn start_server(tracker: StatusTracker) -> Result<()> {
 
     let _ = r.launch().await?;
     if let Some(h) = h {
-        h.abort()
+        h.abort();
     }
     Ok(())
 }
