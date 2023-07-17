@@ -6,4 +6,5 @@ RUN cargo build --release &&\
     mv target/release/statustracker-server ./statustracker &&\
     cargo clean
 
-CMD ["./statustracker"]
+CMD ./statustracker
+EXPOSE 8000
