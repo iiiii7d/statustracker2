@@ -36,13 +36,11 @@ Made by 7d for the Minecart Rapid Transit server
 ## Usage (Docker)
 
 1. Create a MongoDB cluster and get a URI
-2. Pull the image with docker pull ghcr.io/iiiii7d/statustracker2:v<version>`
-3. Create a toml file for the configuration with the contents above
-4. Create `Rocket.toml` like the above, if applicable
-5. Run the image with `docker run -dp <host_port>:8000 -v <host_config_file>:/statustracker.toml statustracker2`
+2. Pull the image with `docker pull ghcr.io/iiiii7d/statustracker2:v<version>`
+3. Create a toml file for the configuration with the contents above. Save it as `statustracker.toml` in a new folder.
+4. Create `Rocket.toml` like the above, if applicable. Save it in the same folder.
+5. Run the image with `docker run -dp <host_port>:8000 -v <host_config_path>:/cfg ghcr.io/iiiii7d/statustracker2:v<version>`
    - `<host_port>` is the host's port
-   - `<host_config_file>` is the path of the configuration file on the host
-   - If there is `Rocket.toml`, add `-v <host_rocket_file>:Rocket.toml` before `statustracker2`
-     - `<host_rocket_file>` is the path of the `Rocket.toml` file on the host
-   - If there are environment variables, put them in a `.env`, then add `--env ./.env` before `statustracker2`
+   - `<host_config_path>` is the path of the folder containing `statustracker.toml` (and `Rocket.toml`)
+   - If there are environment variables, put them in a `.env`, then add `--env ./.env` before `ghcr.io`
 6. Enter the URL of the site that the server is hosted on, and it should redirect to the client for StatusTracker 2

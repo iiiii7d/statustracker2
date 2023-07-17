@@ -6,5 +6,6 @@ RUN cargo build --release &&\
     mv target/release/statustracker-server ./statustracker &&\
     cargo clean
 
-CMD ./statustracker
+ENV ROCKET_CONFIG=cfg/Rocket.toml
+CMD ./statustracker cfg/statustracker.toml
 EXPOSE 8000
