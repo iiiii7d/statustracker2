@@ -180,7 +180,7 @@ impl STDatabase {
         for (min, record) in (from..=to).zip_eq(mins) {
             let Some(record) = record else {
                 leave(min, &mut start, &mut out);
-                continue
+                continue;
             };
             if record.all.contains(&player) {
                 if start.is_none() {

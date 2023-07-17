@@ -113,8 +113,14 @@ async fn player(
     };
     let tracker = tracker.read().await;
     let uuid = name_to_uuid(name).await?.unwrap_or_default();
-    let Some((i, _)) = tracker.name_map.data.iter().enumerate().find(|(_, a)| *a == uuid.as_bytes()) else {
-        return Ok(CustomMsgPack(Vec::new()))
+    let Some((i, _)) = tracker
+        .name_map
+        .data
+        .iter()
+        .enumerate()
+        .find(|(_, a)| *a == uuid.as_bytes())
+    else {
+        return Ok(CustomMsgPack(Vec::new()));
     };
     let a = tracker.database.get_player_join_times(from, to, i).await?;
 

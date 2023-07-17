@@ -169,7 +169,7 @@ impl From<Hour> for HourDef {
         for (i, record) in value.records.into_iter().enumerate() {
             let Some(record) = record else {
                 prev_record = None;
-                continue
+                continue;
             };
 
             hour.tracked_mins.turn_on(i.try_into().unwrap());
