@@ -10,20 +10,19 @@ jobs:
         working-directory: ./statustracker-client
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - name: Use Node.js 19
-        uses: actions/setup-node@v3
-        with:
-          node-version: "19.x"
-          #cache: 'pnpm'
-      - run: pnpm install --no-frozen-lockfile
-      - run: pnpm run build
-      - run: cd dist; echo > .nojekyll; cd ..
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./statustracker-client/dist
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2
+      with:
+        version: latest
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+    - run: pnpm install --no-frozen-lockfile
+    - run: pnpm run build
+    - run: cd dist; echo > .nojekyll; cd ..
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./statustracker-client/dist
