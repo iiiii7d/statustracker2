@@ -141,7 +141,7 @@ impl STDatabase {
                     vec![Some((*a).into())]
                 }
             })
-            .intersperse(vec![None; step])
+            .intersperse(vec![None; step - 1])
             .flatten()
             .collect())
     }
