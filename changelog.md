@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.4 (23/7/23)
+
+- Fix rolling averages being offset from the raw data
+
 ### v2.2.3 (17/7/23)
 
 - `mongodb_uri` can now be the URI itself instead of just an environment variable
