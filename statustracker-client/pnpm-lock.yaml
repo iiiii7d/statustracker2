@@ -27,14 +27,14 @@ devDependencies:
     specifier: ^1.4.0
     version: 1.4.0
   chart.js:
-    specifier: ^4.3.3
-    version: 4.3.3
+    specifier: ^4.4.0
+    version: 4.4.0
   chartjs-adapter-moment:
     specifier: ^1.0.1
-    version: 1.0.1(chart.js@4.3.3)(moment@2.29.4)
+    version: 1.0.1(chart.js@4.4.0)(moment@2.29.4)
   chartjs-plugin-annotation:
     specifier: ^3.0.1
-    version: 3.0.1(chart.js@4.3.3)
+    version: 3.0.1(chart.js@4.4.0)
   eslint:
     specifier: ^8.47.0
     version: 8.47.0
@@ -58,7 +58,7 @@ devDependencies:
     version: 3.59.2
   svelte-chartjs:
     specifier: ^3.1.2
-    version: 3.1.2(chart.js@4.3.3)(svelte@3.59.2)
+    version: 3.1.2(chart.js@4.4.0)(svelte@3.59.2)
   svelte-check:
     specifier: ^3.5.0
     version: 3.5.0(postcss@8.4.28)(sass@1.66.1)(svelte@3.59.2)
@@ -718,29 +718,29 @@ packages:
       supports-color: 7.2.0
     dev: true
 
-  /chart.js@4.3.3:
-    resolution: {integrity: sha512-aTk7pBw+x6sQYhon/NR3ikfUJuym/LdgpTlgZRe2PaEhjUMKBKyNaFCMVRAyTEWYFNO7qRu7iQVqOw/OqzxZxQ==}
+  /chart.js@4.4.0:
+    resolution: {integrity: sha512-vQEj6d+z0dcsKLlQvbKIMYFHd3t8W/7L2vfJIbYcfyPcRx92CsHqECpueN8qVGNlKyDcr5wBrYAYKnfu/9Q1hQ==}
     engines: {pnpm: '>=7'}
     dependencies:
       '@kurkle/color': 0.3.2
     dev: true
 
-  /chartjs-adapter-moment@1.0.1(chart.js@4.3.3)(moment@2.29.4):
+  /chartjs-adapter-moment@1.0.1(chart.js@4.4.0)(moment@2.29.4):
     resolution: {integrity: sha512-Uz+nTX/GxocuqXpGylxK19YG4R3OSVf8326D+HwSTsNw1LgzyIGRo+Qujwro1wy6X+soNSnfj5t2vZ+r6EaDmA==}
     peerDependencies:
       chart.js: '>=3.0.0'
       moment: ^2.10.2
     dependencies:
-      chart.js: 4.3.3
+      chart.js: 4.4.0
       moment: 2.29.4
     dev: true
 
-  /chartjs-plugin-annotation@3.0.1(chart.js@4.3.3):
+  /chartjs-plugin-annotation@3.0.1(chart.js@4.4.0):
     resolution: {integrity: sha512-hlIrXXKqSDgb+ZjVYHefmlZUXK8KbkCPiynSVrTb/HjTMkT62cOInaT1NTQCKtxKKOm9oHp958DY3RTAFKtkHg==}
     peerDependencies:
       chart.js: '>=4.0.0'
     dependencies:
-      chart.js: 4.3.3
+      chart.js: 4.4.0
     dev: true
 
   /chokidar@3.5.3:
@@ -1689,13 +1689,13 @@ packages:
       has-flag: 4.0.0
     dev: true
 
-  /svelte-chartjs@3.1.2(chart.js@4.3.3)(svelte@3.59.2):
+  /svelte-chartjs@3.1.2(chart.js@4.4.0)(svelte@3.59.2):
     resolution: {integrity: sha512-3+6gY2IJ9Ua8R9pk3iS1ypa7Z9OoXCJb9oPwIfTp7caJM+X+RrWnH2CTkGAq7FeSxc2nnmW08tYN88Q8Y+5M+w==}
     peerDependencies:
       chart.js: ^3.5.0 || ^4.0.0
       svelte: ^3.45.0
     dependencies:
-      chart.js: 4.3.3
+      chart.js: 4.4.0
       svelte: 3.59.2
     dev: true
 
