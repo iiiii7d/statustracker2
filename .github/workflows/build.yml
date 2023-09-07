@@ -25,7 +25,7 @@ jobs:
             asset_name: statustracker2-macos
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install nightly
         run: rustup toolchain install nightly; rustup default nightly
       - name: Build
