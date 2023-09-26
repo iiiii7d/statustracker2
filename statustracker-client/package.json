@@ -20,7 +20,7 @@
     "chart.js": "^4.4.0",
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-plugin-annotation": "^3.0.1",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "eslint-plugin-svelte": "^2.33.0",
     "moment": "^2.29.4",
     "postcss": "^8.4.30",
