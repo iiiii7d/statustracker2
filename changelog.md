@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.5 (5/10/23)
+
+- Upgrade dependencies
+
 ### v2.2.4 (23/7/23)
 
 - Fix rolling averages being offset from the raw data
