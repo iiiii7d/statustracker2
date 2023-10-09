@@ -25,7 +25,7 @@
     "moment": "^2.29.4",
     "postcss": "^8.4.31",
     "postcss-scss": "^4.0.9",
-    "sass": "^1.68.0",
+    "sass": "^1.69.0",
     "svelte": "^4.2.1",
     "svelte-chartjs": "github:SauravKanchan/svelte-chartjs#renovate/svelte-4.x",
     "svelte-check": "^3.5.2",
