@@ -4,41 +4,43 @@
   "version": "2.2.5",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "node --loader ts-node/esm build.mts",
+    "build": "node --loader ts-node/esm build.mts prod",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
     "@msgpack/msgpack": "3.0.0-beta2",
-    "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "@tsconfig/svelte": "^5.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
+    "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "autoprefixer": "^10.4.16",
     "axios": "^1.5.1",
     "chart.js": "^4.4.0",
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-plugin-annotation": "^3.0.1",
-    "eslint": "^8.50.0",
+    "esbuild": "^0.19.5",
+    "esbuild-sass-plugin": "^2.16.0",
+    "esbuild-svelte": "^0.8.0",
+    "eslint": "^8.51.0",
     "eslint-plugin-svelte": "^2.34.0",
     "moment": "^2.29.4",
     "postcss": "^8.4.31",
+    "postcss-preset-env": "^9.2.0",
     "postcss-scss": "^4.0.9",
-    "sass": "^1.68.0",
+    "sass": "^1.69.4",
     "svelte": "^4.2.1",
-    "svelte-chartjs": "SauravKanchan/svelte-chartjs#renovate/svelte-4.x",
+    "svelte-chartjs": "^3.1.2",
     "svelte-check": "^3.5.2",
     "svelte-markdown": "^0.4.0",
     "svelte-preprocess": "^5.0.4",
+    "ts-node": "11.0.0-beta.1",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "typescript": "^5.2.2"
   },
-  "postcss": {
-    "syntax": "postcss-scss",
-    "plugins": {
-      "autoprefixer": {}
+  "overrides": {
+    "svelte-chartjs": {
+      "svelte": ">=4.x"
     }
   }
 }
