@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --loader ts-node/esm build.mts",
+    "build": "node --loader ts-node/esm build.mts prod",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
