@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { Chart, registerables, type ChartData, type CoreChartOptions, type DatasetChartOptions, type ElementChartOptions, type LineControllerChartOptions, type PluginChartOptions, type Point, type ScaleChartOptions, type ChartDataset } from 'chart.js';
-  import type { _DeepPartialObject } from 'chart.js/dist/types/utils';
+  import { Chart, registerables, type ChartData, type Point, type ChartDataset } from 'chart.js';
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, lineColors, playerActiveTimes, type RollingAverage, rollingAverages, lineColor } from "../stores";
+  import { data, playerActiveTimes, type RollingAverage, rollingAverages, lineColor } from "../stores";
   import type { Category } from '../retrieve-data';
 
   Chart.register(...registerables, annotationPlugin);
@@ -54,11 +53,11 @@
               content: `${from.local().format("HH:mm")} → ${to.local().format("HH:mm")}`,
               color: "#fc0",
             },
-            enter({element}) {
+            enter({element}: any) {
               if (element.label) element.label.options.display = true;
               return true;
             },
-            leave({element}) {
+            leave({element}: any) {
               if (element.label) element.label.options.display = false;
               return true;
             }
@@ -83,7 +82,7 @@
         min: 0,
       },
     }
-  } as _DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<"line"> & LineControllerChartOptions>;
+  };
 </script>
 <Line
   data={chartData} {options}

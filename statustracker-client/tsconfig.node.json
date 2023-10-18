@@ -5,5 +5,5 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./build.mjs"]
+  "include": ["./statustracker-client/build.mts", "./build.mts"]
 }

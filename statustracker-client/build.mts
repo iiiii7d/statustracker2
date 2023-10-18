@@ -1,3 +1,4 @@
+/* eslint-env node */
 import * as esbuild from "esbuild";
 import autoprefixer from "autoprefixer";
 import postcssPresetEnv from "postcss-preset-env";
@@ -9,7 +10,7 @@ import sveltePreprocess from "svelte-preprocess";
 
 const postcssPlugins = [autoprefixer(), postcssPresetEnv({ stage: 0 })];
 
-let ctx = await esbuild.context({
+const ctx = await esbuild.context({
   entryPoints: ["src/main.ts"],
   bundle: true,
   minify: true,
@@ -39,7 +40,10 @@ let ctx = await esbuild.context({
     }),
   ],
   loader: {
-    ".md": "file",
+    ".md": "text",
+  },
+  define: {
+    __APP_VERSION__: `"${process.env.npm_package_version}"` ?? "???",
   },
 });
 if (!fs.existsSync("out")) fs.mkdirSync("out");
@@ -52,7 +56,7 @@ if (process.argv[2] == "prod") {
 
 await ctx.watch();
 
-let { host, port } = await ctx.serve({
+const { host, port } = await ctx.serve({
   servedir: "out",
 });
 console.log(`http://${host}:${port}`);
