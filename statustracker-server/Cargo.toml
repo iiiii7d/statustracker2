@@ -15,7 +15,7 @@ openssl = { version = "^0.10.57", features = ["vendored"] }
 reqwest = { version = "^0.12.2", features = ["json"] }
 url = { version = "^2.4.1", features = ["serde"] }
 rocket = { version = "^0.5.0-rc.3", features = ["msgpack"] }
-smol_str = {version = "^0.2.0", features = ["serde"] }
+smol_str = {version = "^0.3.1", features = ["serde"] }
 
 tokio = { version = "^1.33.0", features = ["full"] }
 futures = "^0.3.28"
