@@ -46,13 +46,13 @@ importers:
         version: 2.16.0(esbuild@0.19.5)
       esbuild-svelte:
         specifier: ^0.8.0
-        version: 0.8.0(esbuild@0.19.5)(svelte@4.2.1)
+        version: 0.8.0(esbuild@0.19.5)(svelte@4.2.19)
       eslint:
         specifier: ^8.51.0
         version: 8.51.0
       eslint-plugin-svelte:
         specifier: ^2.34.0
-        version: 2.34.0(eslint@8.51.0)(svelte@4.2.1)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2))
+        version: 2.34.0(eslint@8.51.0)(svelte@4.2.19)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2))
       moment:
         specifier: ^2.29.4
         version: 2.29.4
@@ -69,20 +69,20 @@ importers:
         specifier: ^1.69.4
         version: 1.69.4
       svelte:
-        specifier: ^4.2.1
-        version: 4.2.1
+        specifier: ^4.2.19
+        version: 4.2.19
       svelte-chartjs:
         specifier: ^3.1.2
-        version: 3.1.2(chart.js@4.4.0)(svelte@4.2.1)
+        version: 3.1.2(chart.js@4.4.0)(svelte@4.2.19)
       svelte-check:
         specifier: ^3.5.2
-        version: 3.5.2(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.1)
+        version: 3.5.2(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.19)
       svelte-markdown:
         specifier: ^0.4.0
-        version: 0.4.0(svelte@4.2.1)
+        version: 0.4.0(svelte@4.2.19)
       svelte-preprocess:
         specifier: ^5.0.4
-        version: 5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.1)(typescript@5.2.2)
+        version: 5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.19)(typescript@5.2.2)
       ts-node:
         specifier: 11.0.0-beta.1
         version: 11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)
@@ -660,8 +660,9 @@ packages:
   axios@1.7.4:
     resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
 
-  axobject-query@3.2.1:
-    resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
+  axobject-query@4.1.0:
+    resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
+    engines: {node: '>= 0.4'}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -854,6 +855,7 @@ packages:
   eslint@8.51.0:
     resolution: {integrity: sha512-2WuxRZBrlwnXi+/vFSJyjMqrNjtJqiasMzehF0shoLaW7DzS3/9Yvrmq5JiT66+pNjiX4UBnLDiKHcWAr/OInA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -1087,8 +1089,8 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
-  micromatch@4.0.5:
-    resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
+  micromatch@4.0.8:
+    resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
   mime-db@1.52.0:
@@ -1541,8 +1543,8 @@ packages:
       typescript:
         optional: true
 
-  svelte@4.2.1:
-    resolution: {integrity: sha512-LpLqY2Jr7cRxkrTc796/AaaoMLF/1ax7cto8Ot76wrvKQhrPmZ0JgajiWPmg9mTSDqO16SSLiD17r9MsvAPTmw==}
+  svelte@4.2.19:
+    resolution: {integrity: sha512-IY1rnGr6izd10B0A8LqsBfmlT5OILVuZ7XsI0vdGPEvuonFV7NYEUK4dAkm9Zg2q0Um92kYjTpS1CAP3Nh/KWw==}
     engines: {node: '>=16'}
 
   text-table@0.2.0:
@@ -2137,9 +2139,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  axobject-query@3.2.1:
-    dependencies:
-      dequal: 2.0.3
+  axobject-query@4.1.0: {}
 
   balanced-match@1.0.2: {}
 
@@ -2280,11 +2280,11 @@ snapshots:
       resolve: 1.22.8
       sass: 1.69.4
 
-  esbuild-svelte@0.8.0(esbuild@0.19.5)(svelte@4.2.1):
+  esbuild-svelte@0.8.0(esbuild@0.19.5)(svelte@4.2.19):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.20
       esbuild: 0.19.5
-      svelte: 4.2.1
+      svelte: 4.2.19
 
   esbuild@0.19.5:
     optionalDependencies:
@@ -2315,7 +2315,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-svelte@2.34.0(eslint@8.51.0)(svelte@4.2.1)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)):
+  eslint-plugin-svelte@2.34.0(eslint@8.51.0)(svelte@4.2.19)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.51.0)
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -2328,9 +2328,9 @@ snapshots:
       postcss-safe-parser: 6.0.0(postcss@8.4.31)
       postcss-selector-parser: 6.0.13
       semver: 7.5.4
-      svelte-eslint-parser: 0.33.1(svelte@4.2.1)
+      svelte-eslint-parser: 0.33.1(svelte@4.2.19)
     optionalDependencies:
-      svelte: 4.2.1
+      svelte: 4.2.19
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -2414,7 +2414,7 @@ snapshots:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
 
   fast-json-stable-stringify@2.1.0: {}
 
@@ -2591,7 +2591,7 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  micromatch@4.0.5:
+  micromatch@4.0.8:
     dependencies:
       braces: 3.0.3
       picomatch: 2.3.1
@@ -2989,12 +2989,12 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-chartjs@3.1.2(chart.js@4.4.0)(svelte@4.2.1):
+  svelte-chartjs@3.1.2(chart.js@4.4.0)(svelte@4.2.19):
     dependencies:
       chart.js: 4.4.0
-      svelte: 4.2.1
+      svelte: 4.2.19
 
-  svelte-check@3.5.2(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.1):
+  svelte-check@3.5.2(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.19):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.20
       chokidar: 3.5.3
@@ -3002,8 +3002,8 @@ snapshots:
       import-fresh: 3.3.0
       picocolors: 1.0.0
       sade: 1.8.1
-      svelte: 4.2.1
-      svelte-preprocess: 5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.1)(typescript@5.2.2)
+      svelte: 4.2.19
+      svelte-preprocess: 5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.19)(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
       - '@babel/core'
@@ -3016,7 +3016,7 @@ snapshots:
       - stylus
       - sugarss
 
-  svelte-eslint-parser@0.33.1(svelte@4.2.1):
+  svelte-eslint-parser@0.33.1(svelte@4.2.19):
     dependencies:
       eslint-scope: 7.2.2
       eslint-visitor-keys: 3.4.3
@@ -3024,36 +3024,37 @@ snapshots:
       postcss: 8.4.31
       postcss-scss: 4.0.9(postcss@8.4.31)
     optionalDependencies:
-      svelte: 4.2.1
+      svelte: 4.2.19
 
-  svelte-markdown@0.4.0(svelte@4.2.1):
+  svelte-markdown@0.4.0(svelte@4.2.19):
     dependencies:
       '@types/marked': 5.0.2
       marked: 5.1.2
-      svelte: 4.2.1
+      svelte: 4.2.19
 
-  svelte-preprocess@5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.1)(typescript@5.2.2):
+  svelte-preprocess@5.0.4(postcss-load-config@3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2)))(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.19)(typescript@5.2.2):
     dependencies:
       '@types/pug': 2.0.7
       detect-indent: 6.1.0
       magic-string: 0.27.0
       sorcery: 0.11.0
       strip-indent: 3.0.0
-      svelte: 4.2.1
+      svelte: 4.2.19
     optionalDependencies:
       postcss: 8.4.31
       postcss-load-config: 3.1.4(postcss@8.4.31)(ts-node@11.0.0-beta.1(@types/node@20.8.7)(typescript@5.2.2))
       sass: 1.69.4
       typescript: 5.2.2
 
-  svelte@4.2.1:
+  svelte@4.2.19:
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@jridgewell/sourcemap-codec': 1.4.15
       '@jridgewell/trace-mapping': 0.3.20
+      '@types/estree': 1.0.3
       acorn: 8.10.0
       aria-query: 5.3.0
-      axobject-query: 3.2.1
+      axobject-query: 4.1.0
       code-red: 1.0.4
       css-tree: 2.3.1
       estree-walker: 3.0.3
