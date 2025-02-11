@@ -19,7 +19,7 @@
     "chart.js": "^4.4.0",
     "chartjs-adapter-moment": "^1.0.1",
     "chartjs-plugin-annotation": "^3.0.1",
-    "esbuild": "^0.19.5",
+    "esbuild": "^0.25.0",
     "esbuild-sass-plugin": "^2.16.0",
     "esbuild-svelte": "^0.8.0",
     "eslint": "^8.51.0",
