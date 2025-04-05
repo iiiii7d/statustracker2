@@ -10,7 +10,6 @@ updates:
     schedule:
       interval: "weekly"
       time: "00:00"
-    versioning-strategy: "increase"
     target-branch: "dev"
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/statustracker-client" # Location of package manifests
