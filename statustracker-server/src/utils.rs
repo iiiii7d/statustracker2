@@ -15,7 +15,7 @@ pub fn get_hour_timestamp(t: SystemTime) -> HourTimestamp {
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub struct BitField64(pub i32, pub i32);
 impl BitField64 {
-    pub fn turn_on(&mut self, i: i32) {
+    pub const fn turn_on(&mut self, i: i32) {
         if i < 30 {
             self.0 |= 1 << i;
         } else {

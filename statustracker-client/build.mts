@@ -43,7 +43,7 @@ const ctx = await esbuild.context({
     ".md": "text",
   },
   define: {
-    __APP_VERSION__: `"${process.env.npm_package_version}"` ?? "???",
+    __APP_VERSION__: `"${process.env.npm_package_version}"`,
   },
 });
 if (!fs.existsSync("out")) fs.mkdirSync("out");
@@ -56,7 +56,10 @@ if (process.argv[2] == "prod") {
 
 await ctx.watch();
 
-const { host, port } = await ctx.serve({
+const {
+  hosts: [host],
+  port,
+} = await ctx.serve({
   servedir: "out",
 });
 console.log(`http://${host}:${port}`);

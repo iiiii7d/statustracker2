@@ -5,7 +5,6 @@ use futures::StreamExt;
 use itertools::Itertools;
 use mongodb::{
     bson::{doc, to_bson},
-    options::UpdateOptions,
     Database,
 };
 use rayon::prelude::*;
@@ -45,11 +44,8 @@ impl STDatabase {
         b.as_document_mut().unwrap().remove("_id");
         self.0
             .collection::<NameMapWrapper>("name_map")
-            .update_one(
-                doc! {"_id": 0u32},
-                doc! {"$set": b},
-                Some(UpdateOptions::builder().upsert(true).build()),
-            )
+            .update_one(doc! {"_id": 0u32}, doc! {"$set": b})
+            .upsert(true)
             .await?;
         Ok(())
     }
@@ -57,15 +53,12 @@ impl STDatabase {
         let a = self
             .0
             .collection::<HourDef>("hours")
-            .find(
-                doc! {
-                    "_id": {
-                        "$gte": from,
-                        "$lte": to
-                    }
-                },
-                None,
-            )
+            .find(doc! {
+                "_id": {
+                    "$gte": from,
+                    "$lte": to
+                }
+            })
             .await?
             .collect::<Vec<_>>()
             .await;
@@ -79,7 +72,7 @@ impl STDatabase {
         Ok(self
             .0
             .collection::<HourDef>("hours")
-            .find_one(doc! {"_id": timestamp}, None)
+            .find_one(doc! {"_id": timestamp})
             .await
             .map(|a| a.map(Into::into))?)
     }
@@ -152,11 +145,8 @@ impl STDatabase {
         b.as_document_mut().unwrap().remove("_id");
         self.0
             .collection::<HourDef>("hours")
-            .update_one(
-                doc! {"_id": hour._id},
-                doc! {"$set": b},
-                Some(UpdateOptions::builder().upsert(true).build()),
-            )
+            .update_one(doc! {"_id": hour._id}, doc! {"$set": b})
+            .upsert(true)
             .await?;
         Ok(())
     }

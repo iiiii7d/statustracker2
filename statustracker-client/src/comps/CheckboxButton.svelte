@@ -1,13 +1,18 @@
 <script lang="ts">
-  export let value = false;
-  let button: HTMLButtonElement;
+  interface Props {
+    value?: boolean;
+    children?: import('svelte').Snippet;
+  }
+
+  let { value = $bindable(false), children }: Props = $props();
+  let button: HTMLButtonElement | undefined = $state();
 
   function toggle() {
     value = !value;
     if (value) {
-      button.classList.add("checked");
+      button?.classList.add("checked");
     } else {
-      button.classList.remove("checked");
+      button?.classList.remove("checked");
     }
   }
 </script>
@@ -25,4 +30,4 @@
     }
   }
 </style>
-<button on:click={toggle} bind:this={button} class:checked={value}><slot></slot></button>
+<button onclick={toggle} bind:this={button} class:checked={value}>{@render children?.()}</button>

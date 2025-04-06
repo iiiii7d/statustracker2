@@ -3,7 +3,7 @@
   import 'chartjs-adapter-moment';
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { Line } from 'svelte-chartjs';
-  import { data, playerActiveTimes, type RollingAverage, rollingAverages, lineColor } from "../stores";
+  import { serverData, playerActiveTimes, type RollingAverage, rollingAverages, lineColor } from "../stores";
   import type { Category } from '../retrieve-data';
 
   Chart.register(...registerables, annotationPlugin);
@@ -22,24 +22,25 @@
     }
   }
 
-  $: chartData = {
-    labels: $data.x,
-    datasets: Array.from($data.y.entries())
-    .sort(([a, _], [b, __]) => b - a)
-    .flatMap(([ra, m], i) => {
-      return Array.from(m.entries()).map(([cat, y]) => {
-        return generateLine(cat, y, i, ra)
-      })
-    }),
-  } as ChartData<"line", (number | Point)[], moment.Moment>;
-  $: options = {
+  let chartData = $state<ChartData<"line", (number | Point)[], moment.Moment>>();
+  serverData.subscribe(serverData => chartData = ({
+    labels: serverData.x,
+    datasets: Array.from(serverData.y.entries())
+      .sort(([a, _], [b, __]) => b - a)
+      .flatMap(([ra, m], i) => {
+        return Array.from(m.entries()).map(([cat, y]) => {
+          return generateLine(cat, y, i, ra)
+        })
+      })}))
+  let options = $state();
+  playerActiveTimes.subscribe(playerActiveTimes => options = {
     animation: false,
     plugins: {
       annotation: {
         common: {
           drawTime: 'beforeDraw'
         },
-        annotations: $playerActiveTimes.map(([from, to]) => {
+        annotations: playerActiveTimes.map(([from, to]) => {
           console.log(from, to);
           return {
             type: 'box',
@@ -82,7 +83,7 @@
         min: 0,
       },
     }
-  };
+  });
 </script>
 <Line
   data={chartData} {options}

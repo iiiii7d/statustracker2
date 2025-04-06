@@ -3,17 +3,17 @@
   import { onMount } from "svelte";
   import CheckboxButton from "../comps/CheckboxButton.svelte";
   import { getLines, getPlayerJoinTimes } from "../retrieve-data";
-  import { data, playerActiveTimes, rollingAverageSwitches, type RollingAverage } from "../stores";
-  let origPlayer = "";
-  let loading = 0;
+  import { serverData, playerActiveTimes, rollingAverageSwitches, type RollingAverage } from "../stores";
+  let origPlayer = $state("");
+  let loading = $state(0);
 
   const defaultFrom = moment().subtract(1, "d").local(true);
   const defaultTo = moment().add(1, "m").local(true);
 
-  let from = defaultFrom.toISOString(true).slice(0, 16);
-  let to = defaultTo.toISOString(true).slice(0, 16);
-  let player = "";
-  $: player = player.trim()
+  let from = $state(defaultFrom.toISOString(true).slice(0, 16));
+  let to = $state(defaultTo.toISOString(true).slice(0, 16));
+  let player = $state("");
+  $effect(() => {player = player.trim()})
   onMount(query);
   rollingAverageSwitches.subscribe(query)
 
@@ -23,13 +23,13 @@
       origPlayer = player;
       const f = Math.floor((from ? moment(from) : defaultFrom).unix()/60);
       const t = Math.floor((to ? moment(to) : defaultTo).unix()/60);
-      $data = await getLines(
+      serverData.set(await getLines(
         f, t,
         //player,
         Object.entries($rollingAverageSwitches).filter(([_, v]) => v)
         .map(([k, _]) => parseInt(k) as RollingAverage).sort()
-      )
-      $playerActiveTimes = player ? await getPlayerJoinTimes(f, t, player) : []
+      ))
+      playerActiveTimes.set(player ? await getPlayerJoinTimes(f, t, player) : [])
     } catch (e) {console.error(e)}
     loading--;
   }
@@ -47,7 +47,7 @@
       lastLeft
     }
   }
-  $: playerStats = getPlayerStats($playerActiveTimes)
+  let playerStats = $derived(getPlayerStats($playerActiveTimes))
 </script>
 <style lang="scss">
   #player-stats {
@@ -69,7 +69,7 @@
 <label for="from">from </label><input type="datetime-local" id="from" bind:value={from}/>
 <label for="to">to </label><input type="datetime-local" id="to" bind:value={to} />
 <label for="player">for player </label><input type="text" id="player" bind:value={player} placeholder="username"/>
-<button on:click={query}>Query</button><br>
+<button onclick={query}>Query</button><br>
 {#if loading !== 0}
   <span id="player-stats">Loading...</span>
 {:else if playerStats && player === origPlayer && player !== ""}

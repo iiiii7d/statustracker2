@@ -22,7 +22,7 @@ impl StatusTracker {
             return Err(eyre!("Category named `all` found"));
         }
         info!("Creating client");
-        let mongodb_uri = if let Ok(mongodb_uri) = std::env::var(config.mongodb_uri.to_string()) {
+        let mongodb_uri = if let Ok(mongodb_uri) = std::env::var(&config.mongodb_uri) {
             mongodb_uri
         } else {
             config.mongodb_uri.to_string()
@@ -33,7 +33,7 @@ impl StatusTracker {
         let name_map = database
             .0
             .collection("name_map")
-            .find_one(doc! {"_id": 0u32}, None)
+            .find_one(doc! {"_id": 0u32})
             .await?
             .unwrap_or_default();
         Ok(Self {

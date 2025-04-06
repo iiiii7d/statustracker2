@@ -2,7 +2,7 @@ import type moment from "moment";
 import { writable } from "svelte/store";
 import type { Category } from "./retrieve-data";
 
-export const data = writable<{
+export const serverData = writable<{
   x: moment.Moment[];
   y: Map<RollingAverage, Map<Category, number[]>>;
 }>({
