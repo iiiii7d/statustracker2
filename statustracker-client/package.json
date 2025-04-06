@@ -4,8 +4,8 @@
   "version": "2.2.5",
   "type": "module",
   "scripts": {
-    "dev": "node --loader ts-node/esm build.mts",
-    "build": "node --loader ts-node/esm build.mts prod",
+    "dev": "node --experimental-transform-types build.mts",
+    "build": "node --experimental-transform-types build.mts prod",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
