@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.2.6 (6/4/25)
+
+- Upgrade dependencies
+
 ### v2.2.5 (5/10/23)
 
 - Upgrade dependencies
