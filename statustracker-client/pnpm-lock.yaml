@@ -30,14 +30,14 @@ importers:
         specifier: ^1.8.4
         version: 1.8.4
       chart.js:
-        specifier: ^4.4.8
-        version: 4.4.8
+        specifier: ^4.4.9
+        version: 4.4.9
       chartjs-adapter-moment:
         specifier: ^1.0.1
-        version: 1.0.1(chart.js@4.4.8)(moment@2.30.1)
+        version: 1.0.1(chart.js@4.4.9)(moment@2.30.1)
       chartjs-plugin-annotation:
         specifier: ^3.1.0
-        version: 3.1.0(chart.js@4.4.8)
+        version: 3.1.0(chart.js@4.4.9)
       esbuild:
         specifier: ^0.25.2
         version: 0.25.2
@@ -73,7 +73,7 @@ importers:
         version: 5.26.2
       svelte-chartjs:
         specifier: ^3.1.5
-        version: 3.1.5(chart.js@4.4.8)(svelte@5.26.2)
+        version: 3.1.5(chart.js@4.4.9)(svelte@5.26.2)
       svelte-check:
         specifier: ^4.1.6
         version: 4.1.6(svelte@5.26.2)(typescript@5.8.3)
@@ -882,8 +882,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chart.js@4.4.8:
-    resolution: {integrity: sha512-IkGZlVpXP+83QpMm4uxEiGqSI7jFizwVtF3+n5Pc3k7sMO+tkd0qxh2OzLhenM0K80xtmAONWGBn082EiBQSDA==}
+  chart.js@4.4.9:
+    resolution: {integrity: sha512-EyZ9wWKgpAU0fLJ43YAEIF8sr5F2W3LqbS40ZJyHIner2lY14ufqv2VMp69MAiZ2rpwxEUxEhIH/0U3xyRynxg==}
     engines: {pnpm: '>=8'}
 
   chartjs-adapter-moment@1.0.1:
@@ -2633,18 +2633,18 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chart.js@4.4.8:
+  chart.js@4.4.9:
     dependencies:
       '@kurkle/color': 0.3.4
 
-  chartjs-adapter-moment@1.0.1(chart.js@4.4.8)(moment@2.30.1):
+  chartjs-adapter-moment@1.0.1(chart.js@4.4.9)(moment@2.30.1):
     dependencies:
-      chart.js: 4.4.8
+      chart.js: 4.4.9
       moment: 2.30.1
 
-  chartjs-plugin-annotation@3.1.0(chart.js@4.4.8):
+  chartjs-plugin-annotation@3.1.0(chart.js@4.4.9):
     dependencies:
-      chart.js: 4.4.8
+      chart.js: 4.4.9
 
   chokidar@4.0.3:
     dependencies:
@@ -3497,9 +3497,9 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-chartjs@3.1.5(chart.js@4.4.8)(svelte@5.26.2):
+  svelte-chartjs@3.1.5(chart.js@4.4.9)(svelte@5.26.2):
     dependencies:
-      chart.js: 4.4.8
+      chart.js: 4.4.9
       svelte: 5.26.2
 
   svelte-check@4.1.6(svelte@5.26.2)(typescript@5.8.3):
