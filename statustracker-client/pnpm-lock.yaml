@@ -66,8 +66,8 @@ importers:
         specifier: ^4.0.9
         version: 4.0.9(postcss@8.5.3)
       sass:
-        specifier: ^1.86.3
-        version: 1.86.3
+        specifier: ^1.87.0
+        version: 1.87.0
       svelte:
         specifier: ^5.26.2
         version: 5.26.2
@@ -82,7 +82,7 @@ importers:
         version: 0.4.1(svelte@5.26.2)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.86.3)(svelte@5.26.2)(typescript@5.8.3)
+        version: 6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.26.2)(typescript@5.8.3)
       ts-node:
         specifier: 11.0.0-beta.1
         version: 11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)
@@ -1698,8 +1698,8 @@ packages:
     engines: {node: '>=16.0.0'}
     hasBin: true
 
-  sass@1.86.3:
-    resolution: {integrity: sha512-iGtg8kus4GrsGLRDLRBRHY9dNVA78ZaS7xr01cWnS7PEMQyFtTqBiyCrfpTYTZXRWM94akzckYjh8oADfFNTzw==}
+  sass@1.87.0:
+    resolution: {integrity: sha512-d0NoFH4v6SjEK7BoX810Jsrhj7IQSYHAHLi/iSpgqKc7LaIDshFRlSg5LOymf9FqQhxEHs2W5ZQXlvy0KD45Uw==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -2681,7 +2681,7 @@ snapshots:
       esbuild: 0.25.2
       resolve: 1.22.10
       safe-identifier: 0.4.2
-      sass: 1.86.3
+      sass: 1.87.0
       sass-embedded: 1.86.3
 
   esbuild-svelte@0.9.2(esbuild@0.25.2)(svelte@5.26.2):
@@ -3415,7 +3415,7 @@ snapshots:
       sass-embedded-win32-ia32: 1.86.3
       sass-embedded-win32-x64: 1.86.3
 
-  sass@1.86.3:
+  sass@1.87.0:
     dependencies:
       chokidar: 4.0.3
       immutable: 5.1.1
@@ -3479,13 +3479,13 @@ snapshots:
       marked: 5.1.2
       svelte: 5.26.2
 
-  svelte-preprocess@6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.86.3)(svelte@5.26.2)(typescript@5.8.3):
+  svelte-preprocess@6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.26.2)(typescript@5.8.3):
     dependencies:
       svelte: 5.26.2
     optionalDependencies:
       postcss: 8.5.3
       postcss-load-config: 3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3))
-      sass: 1.86.3
+      sass: 1.87.0
       typescript: 5.8.3
 
   svelte@5.26.2:
