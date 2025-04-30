@@ -3,6 +3,9 @@ on:
   schedule:
     - cron: "0 0 * * 1"
 
+
+
+
 jobs:
   cargo-upgrade:
     runs-on: ubuntu-latest
@@ -11,8 +14,6 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: "dev"
       - uses: actions/cache@v4
         with:
           path: |
@@ -25,9 +26,11 @@ jobs:
           crate: cargo-edit
       - run: cargo upgrade -i --recursive true
       - run: cargo update
+        continue-on-error: true
       - run: echo "message=upgrade rust dependencies @ $(date +%Y%m%dT%H:%M:%S%Z)" >> "$GITHUB_ENV"
       - uses: peter-evans/create-pull-request@v7
         with:
           commit-message: ${{ env.message }}
           title: upgrade rust dependencies
           branch: cargo-upgrade
+
