@@ -46,13 +46,13 @@ importers:
         version: 3.3.1(esbuild@0.25.3)(sass-embedded@1.86.3)
       esbuild-svelte:
         specifier: ^0.9.2
-        version: 0.9.2(esbuild@0.25.3)(svelte@5.26.2)
+        version: 0.9.2(esbuild@0.25.3)(svelte@5.28.2)
       eslint:
         specifier: ^9.26.0
         version: 9.26.0
       eslint-plugin-svelte:
         specifier: ^3.5.1
-        version: 3.5.1(eslint@9.26.0)(svelte@5.26.2)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3))
+        version: 3.5.1(eslint@9.26.0)(svelte@5.28.2)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3))
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -69,20 +69,20 @@ importers:
         specifier: ^1.87.0
         version: 1.87.0
       svelte:
-        specifier: ^5.26.2
-        version: 5.26.2
+        specifier: ^5.28.2
+        version: 5.28.2
       svelte-chartjs:
         specifier: ^3.1.5
-        version: 3.1.5(chart.js@4.4.9)(svelte@5.26.2)
+        version: 3.1.5(chart.js@4.4.9)(svelte@5.28.2)
       svelte-check:
         specifier: ^4.1.7
-        version: 4.1.7(svelte@5.26.2)(typescript@5.8.3)
+        version: 4.1.7(svelte@5.28.2)(typescript@5.8.3)
       svelte-markdown:
         specifier: ^0.4.1
-        version: 0.4.1(svelte@5.26.2)
+        version: 0.4.1(svelte@5.28.2)
       svelte-preprocess:
         specifier: ^6.0.3
-        version: 6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.26.2)(typescript@5.8.3)
+        version: 6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.28.2)(typescript@5.8.3)
       ts-node:
         specifier: 11.0.0-beta.1
         version: 11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)
@@ -2029,8 +2029,8 @@ packages:
       typescript:
         optional: true
 
-  svelte@5.26.2:
-    resolution: {integrity: sha512-e2TEcGK2YKVwDWYy5OsptVclYgDvfY1E/8IzPiOq63uG/GDo/j5VUYTC9EinQNraoZalbMWN+5f5TYC1QlAqOw==}
+  svelte@5.28.2:
+    resolution: {integrity: sha512-FbWBxgWOpQfhKvoGJv/TFwzqb4EhJbwCD17dB0tEpQiw1XyUEKZJtgm4nA4xq3LLsMo7hu5UY/BOFmroAxKTMg==}
     engines: {node: '>=18'}
 
   sync-child-process@1.0.2:
@@ -3027,11 +3027,11 @@ snapshots:
       sass: 1.87.0
       sass-embedded: 1.86.3
 
-  esbuild-svelte@0.9.2(esbuild@0.25.3)(svelte@5.26.2):
+  esbuild-svelte@0.9.2(esbuild@0.25.3)(svelte@5.28.2):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       esbuild: 0.25.3
-      svelte: 5.26.2
+      svelte: 5.28.2
 
   esbuild@0.25.3:
     optionalDependencies:
@@ -3067,7 +3067,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-svelte@3.5.1(eslint@9.26.0)(svelte@5.26.2)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)):
+  eslint-plugin-svelte@3.5.1(eslint@9.26.0)(svelte@5.28.2)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)):
     dependencies:
       '@eslint-community/eslint-utils': 4.5.1(eslint@9.26.0)
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -3078,9 +3078,9 @@ snapshots:
       postcss-load-config: 3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3))
       postcss-safe-parser: 7.0.1(postcss@8.5.3)
       semver: 7.7.1
-      svelte-eslint-parser: 1.1.2(svelte@5.26.2)
+      svelte-eslint-parser: 1.1.2(svelte@5.28.2)
     optionalDependencies:
-      svelte: 5.26.2
+      svelte: 5.28.2
     transitivePeerDependencies:
       - ts-node
 
@@ -3988,24 +3988,24 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-chartjs@3.1.5(chart.js@4.4.9)(svelte@5.26.2):
+  svelte-chartjs@3.1.5(chart.js@4.4.9)(svelte@5.28.2):
     dependencies:
       chart.js: 4.4.9
-      svelte: 5.26.2
+      svelte: 5.28.2
 
-  svelte-check@4.1.7(svelte@5.26.2)(typescript@5.8.3):
+  svelte-check@4.1.7(svelte@5.28.2)(typescript@5.8.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.3
       fdir: 6.4.4
       picocolors: 1.1.1
       sade: 1.8.1
-      svelte: 5.26.2
+      svelte: 5.28.2
       typescript: 5.8.3
     transitivePeerDependencies:
       - picomatch
 
-  svelte-eslint-parser@1.1.2(svelte@5.26.2):
+  svelte-eslint-parser@1.1.2(svelte@5.28.2):
     dependencies:
       eslint-scope: 8.3.0
       eslint-visitor-keys: 4.2.0
@@ -4014,24 +4014,24 @@ snapshots:
       postcss-scss: 4.0.9(postcss@8.5.3)
       postcss-selector-parser: 7.1.0
     optionalDependencies:
-      svelte: 5.26.2
+      svelte: 5.28.2
 
-  svelte-markdown@0.4.1(svelte@5.26.2):
+  svelte-markdown@0.4.1(svelte@5.28.2):
     dependencies:
       '@types/marked': 5.0.2
       marked: 5.1.2
-      svelte: 5.26.2
+      svelte: 5.28.2
 
-  svelte-preprocess@6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.26.2)(typescript@5.8.3):
+  svelte-preprocess@6.0.3(postcss-load-config@3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3)))(postcss@8.5.3)(sass@1.87.0)(svelte@5.28.2)(typescript@5.8.3):
     dependencies:
-      svelte: 5.26.2
+      svelte: 5.28.2
     optionalDependencies:
       postcss: 8.5.3
       postcss-load-config: 3.1.4(postcss@8.5.3)(ts-node@11.0.0-beta.1(@types/node@22.14.1)(typescript@5.8.3))
       sass: 1.87.0
       typescript: 5.8.3
 
-  svelte@5.26.2:
+  svelte@5.28.2:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@jridgewell/sourcemap-codec': 1.5.0
