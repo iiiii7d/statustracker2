@@ -75,8 +75,8 @@ importers:
         specifier: ^3.1.5
         version: 3.1.5(chart.js@4.4.9)(svelte@5.28.2)
       svelte-check:
-        specifier: ^4.1.7
-        version: 4.1.7(svelte@5.28.2)(typescript@5.8.3)
+        specifier: ^4.2.1
+        version: 4.2.1(svelte@5.28.2)(typescript@5.8.3)
       svelte-markdown:
         specifier: ^0.4.1
         version: 0.4.1(svelte@5.28.2)
@@ -1952,8 +1952,8 @@ packages:
       chart.js: ^3.5.0 || ^4.0.0
       svelte: ^4.0.0
 
-  svelte-check@4.1.7:
-    resolution: {integrity: sha512-1jX4BzXrQJhC/Jt3SqYf6Ntu//vmfc6VWp07JkRfK2nn+22yIblspVUo96gzMkg0Zov8lQicxhxsMzOctwcMQQ==}
+  svelte-check@4.2.1:
+    resolution: {integrity: sha512-e49SU1RStvQhoipkQ/aonDhHnG3qxHSBtNfBRb9pxVXoa+N7qybAo32KgA9wEb2PCYFNaDg7bZCdhLD1vHpdYA==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
@@ -3949,7 +3949,7 @@ snapshots:
       chart.js: 4.4.9
       svelte: 5.28.2
 
-  svelte-check@4.1.7(svelte@5.28.2)(typescript@5.8.3):
+  svelte-check@4.2.1(svelte@5.28.2)(typescript@5.8.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.3
