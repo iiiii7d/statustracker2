@@ -1,3 +1,5 @@
+# v2 is deprecated. See [StatusTracker 3](https://github.com/iiiii7d/statustracker3)
+
 # StatusTracker 2
 
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/iiiii7d/statustracker2?include_prereleases)
